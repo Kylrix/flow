@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import AppBar from '@/app/components/layout/AppBar';
-import Sidebar from '@/app/components/layout/Sidebar';
-import { useTask } from '@/app/context/TaskContext';
+import AppBar from '@/components/layout/AppBar';
+import Sidebar from '@/components/layout/Sidebar';
+import { useTask } from '@/context/TaskContext';
 
 const DRAWER_WIDTH = 280;
 

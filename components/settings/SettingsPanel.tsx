@@ -48,7 +48,7 @@ import {
   Link as LinkIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
-import { useThemeMode } from '@/app/theme/ThemeProvider';
+import { useThemeMode } from '@/theme';
 
 interface TabPanelProps {
   children?: React.ReactNode;

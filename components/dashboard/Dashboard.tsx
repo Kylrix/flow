@@ -24,8 +24,8 @@ import {
   Flag as FlagIcon,
   ArrowForward as ArrowIcon,
   Lightbulb as TipIcon,
-  LocalFireDepartment as StreakIcon,
-  EmojiEvents as TrophyIcon,
+  import { useTask } from '@/context/TaskContext';
+  import TaskItem from '@/components/tasks/TaskItem';
 } from '@mui/icons-material';
 import { useTask } from '@/app/context/TaskContext';
 import { format, isToday, isTomorrow, isPast, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';

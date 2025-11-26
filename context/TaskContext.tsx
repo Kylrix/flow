@@ -13,7 +13,7 @@ import {
   ViewMode,
   Subtask,
   Comment,
-} from '../types';
+} from '@/types';
 
 // Sample data for demonstration
 const createSampleData = () => {
