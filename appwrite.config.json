@@ -6074,7 +6074,8 @@
             ],
             "$permissions": [
                 "create(\"users\")"
-            ]
+            ],
+            "indexes": []
         },
         {
             "$id": "tasks",
@@ -6173,7 +6174,8 @@
             ],
             "$permissions": [
                 "create(\"users\")"
-            ]
+            ],
+            "indexes": []
         },
         {
             "$id": "events",
@@ -6273,7 +6275,8 @@
             ],
             "$permissions": [
                 "create(\"users\")"
-            ]
+            ],
+            "indexes": []
         },
         {
             "$id": "eventGuests",
@@ -6322,7 +6325,8 @@
             ],
             "$permissions": [
                 "create(\"users\")"
-            ]
+            ],
+            "indexes": []
         },
         {
             "$id": "focusSessions",
@@ -6372,7 +6376,8 @@
             ],
             "$permissions": [
                 "create(\"users\")"
-            ]
+            ],
+            "indexes": []
         }
     ],
     "buckets": [
