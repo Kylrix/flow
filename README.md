@@ -2,6 +2,10 @@
 
 WhisperrFlow is the orchestration layer for Whisperr’s productivity suite. It blends a premium Next.js + Material UI frontend with Appwrite-backed state to deliver task, calendar, and event workflows that feel cohesive across the entire experience.
 
+## What WhisperrFlow Does
+
+WhisperrFlow is an AI/onchain app that unifies your tasks, schedule, and shared events so you can see everything that matters in a single pane. It automatically highlights key information—due dates, attendance status, availability—so you understand what’s next without jumping between tools. The result is a more confident, deliberate daily flow where priorities stay visible and nothing important is overlooked.
+
 ## Highlights
 
 - **Context-driven state** (`TaskContext`, `AuthContext`, `LayoutContext`) keeps tasks, authentication, and the secondary sidebar synchronized across the UI.
