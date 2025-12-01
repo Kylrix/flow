@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ThemeProvider } from '@/theme';
-import { TaskProvider } from '@/context';
+import { TaskProvider, NoteProvider } from '@/context';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -12,7 +12,9 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider>
       <TaskProvider>
-        {children}
+        <NoteProvider>
+          {children}
+        </NoteProvider>
       </TaskProvider>
     </ThemeProvider>
   );

@@ -6,6 +6,7 @@ import AppBar from '@/components/layout/AppBar';
 import Sidebar from '@/components/layout/Sidebar';
 import BottomNav from '@/components/layout/BottomNav';
 import { useTask } from '@/context/TaskContext';
+import { TaskDialog, NoteDialog } from '@/components';
 
 const DRAWER_WIDTH = 280;
 
@@ -39,6 +40,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </Box>
       {/* BottomNav only visible on mobile */}
       {isMobile && <BottomNav />}
+      
+      {/* Global Dialogs */}
+      <TaskDialog />
+      <NoteDialog />
     </Box>
   );
 }

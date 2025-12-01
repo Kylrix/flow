@@ -34,6 +34,7 @@ import {
   Apps as AppsIcon,
 } from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
+import { useNote } from '@/context/NoteContext';
 import { useThemeMode } from '@/theme';
 
 // Whisperr ecosystem apps
@@ -51,12 +52,18 @@ export default function AppBar() {
   const theme = useTheme();
   const { mode, toggleMode } = useThemeMode();
   const { toggleSidebar, setSearchQuery, searchQuery, setTaskDialogOpen } = useTask();
+  const { setNoteDialogOpen } = useNote();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [appsAnchorEl, setAppsAnchorEl] = useState<null | HTMLElement>(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
+  const [createAnchorEl, setCreateAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleCreateClick = (event: React.MouseEvent<HTMLElement>) => {
+    setCreateAnchorEl(event.currentTarget);
   };
 
   const handleAppsClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -71,7 +78,19 @@ export default function AppBar() {
     setAnchorEl(null);
     setAppsAnchorEl(null);
     setNotifAnchorEl(null);
+    setCreateAnchorEl(null);
   };
+
+  const handleCreateTask = () => {
+    setTaskDialogOpen(true);
+    handleClose();
+  };
+
+  const handleCreateNote = () => {
+    setNoteDialogOpen(true);
+    handleClose();
+  };
+
 
   return (
     <MuiAppBar
@@ -175,11 +194,11 @@ export default function AppBar() {
 
         {/* Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          {/* Add Task Button */}
-          <Tooltip title="Add task (Ctrl+N)">
+          {/* Create Button */}
+          <Tooltip title="Create new...">
             <IconButton
               color="primary"
-              onClick={() => setTaskDialogOpen(true)}
+              onClick={handleCreateClick}
               sx={{
                 backgroundColor: theme.palette.primary.main,
                 color: '#fff',
@@ -240,6 +259,35 @@ export default function AppBar() {
             </IconButton>
           </Tooltip>
         </Box>
+
+        <Menu
+          anchorEl={createAnchorEl}
+          open={Boolean(createAnchorEl)}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 3,
+            sx: { width: 200, mt: 1.5 },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          <MenuItem onClick={handleCreateTask}>
+            <ListItemIcon>
+              <Box sx={{ fontSize: '1.2rem' }}>✅</Box>
+            </ListItemIcon>
+            <ListItemText>New Task</ListItemText>
+            <Typography variant="caption" color="text.secondary">
+              Ctrl+N
+            </Typography>
+          </MenuItem>
+          <MenuItem onClick={handleCreateNote}>
+            <ListItemIcon>
+              <Box sx={{ fontSize: '1.2rem' }}>📝</Box>
+            </ListItemIcon>
+            <ListItemText>New Note</ListItemText>
+          </MenuItem>
+        </Menu>
 
         {/* Profile Menu */}
         <Menu
