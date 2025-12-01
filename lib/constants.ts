@@ -18,8 +18,19 @@ export const APP_CONFIG = {
   },
 } as const;
 
+// Whisperr ecosystem app type
+interface EcosystemApp {
+  name: string;
+  shortName: string;
+  icon: string;
+  color: string;
+  description: string;
+  url: string;
+  active?: boolean;
+}
+
 // Whisperr ecosystem apps
-export const ECOSYSTEM_APPS = [
+export const ECOSYSTEM_APPS: EcosystemApp[] = [
   { 
     name: 'WhisperrNote', 
     shortName: 'Note',
@@ -77,4 +88,4 @@ export const ECOSYSTEM_APPS = [
     description: 'Authentication',
     url: '/auth',
   },
-] as const;
+];
