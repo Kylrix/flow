@@ -35,6 +35,7 @@ import {
 import { format, isToday, isTomorrow, isPast, isThisWeek } from 'date-fns';
 import { Task, Priority } from '@/types';
 import { useTask } from '@/context/TaskContext';
+import { useLayout } from '@/context/LayoutContext';
 
 interface TaskItemProps {
   task: Task;
@@ -59,6 +60,7 @@ const priorityLabels: Record<Priority, string> = {
 export default function TaskItem({ task, onClick, compact = false }: TaskItemProps) {
   const theme = useTheme();
   const { completeTask, deleteTask, updateTask, labels, projects, selectTask } = useTask();
+  const { openSecondarySidebar } = useLayout();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -112,6 +114,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
         elevation={isHovered ? 2 : 0}
         onClick={() => {
           selectTask(task.id);
+          openSecondarySidebar('task', task.id);
           onClick?.();
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -343,7 +346,11 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
           sx: { minWidth: 180 },
         }}
       >
-        <MenuItem onClick={() => { selectTask(task.id); handleMenuClose(); }}>
+        <MenuItem onClick={() => { 
+          selectTask(task.id); 
+          openSecondarySidebar('task', task.id);
+          handleMenuClose(); 
+        }}>
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>

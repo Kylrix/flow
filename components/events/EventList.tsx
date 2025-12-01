@@ -19,6 +19,7 @@ import { Event } from '@/types';
 import { addDays, addHours } from 'date-fns';
 import { events as eventApi } from '@/lib/whisperrflow';
 import { useTask } from '@/context/TaskContext';
+import { useLayout } from '@/context/LayoutContext';
 
 export default function EventList() {
   const theme = useTheme();
@@ -28,6 +29,7 @@ export default function EventList() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { projects, userId } = useTask();
+  const { openSecondarySidebar } = useLayout();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -159,7 +161,10 @@ export default function EventList() {
       <Grid container spacing={3}>
         {events.map((event) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={event.id}>
-            <EventCard event={event} onClick={() => console.log('Clicked event', event.id)} />
+            <EventCard 
+              event={event} 
+              onClick={() => openSecondarySidebar('event', event.id, event)} 
+            />
           </Grid>
         ))}
       </Grid>

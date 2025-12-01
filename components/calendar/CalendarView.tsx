@@ -33,6 +33,7 @@ import {
   endOfWeek,
 } from 'date-fns';
 import { useTask } from '@/context/TaskContext';
+import { useLayout } from '@/context/LayoutContext';
 import { Task, Priority } from '@/types';
 
 const priorityColors: Record<Priority, string> = {
@@ -156,6 +157,7 @@ function DayCell({ date, tasks, isCurrentMonth, onTaskClick, onAddTask }: DayCel
 export default function CalendarView() {
   const theme = useTheme();
   const { tasks, selectTask, setTaskDialogOpen } = useTask();
+  const { openSecondarySidebar } = useLayout();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
@@ -187,6 +189,7 @@ export default function CalendarView() {
 
   const handleTaskClick = (taskId: string) => {
     selectTask(taskId);
+    openSecondarySidebar('task', taskId);
   };
 
   const handleAddTask = (date: Date) => {

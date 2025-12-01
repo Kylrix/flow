@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  Drawer,
   Box,
   Typography,
   IconButton,
@@ -16,12 +15,8 @@ import {
   ListItemText,
   Checkbox,
   Avatar,
-  Tooltip,
   Menu,
   MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
   LinearProgress,
   useTheme,
   alpha,
@@ -34,25 +29,17 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
-  MoreVert as MoreIcon,
-  Send as SendIcon,
-  PlayArrow as PlayIcon,
-  Pause as PauseIcon,
-  CheckCircle as CheckIcon,
   Folder as FolderIcon,
   Label as LabelIcon,
-  AttachFile as AttachIcon,
-  Link as LinkIcon,
-  Description as DescriptionIcon,
   Notes as NotesIcon,
   Event as EventIcon,
   VideoCall as MeetingIcon,
+  Send as SendIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useTask } from '@/context/TaskContext';
 import { Priority, TaskStatus } from '@/types';
-
-const DRAWER_WIDTH = 420;
+import { useLayout } from '@/context/LayoutContext';
 
 const priorityColors: Record<Priority, string> = {
   low: '#94a3b8',
@@ -69,11 +56,15 @@ const statusLabels: Record<TaskStatus, string> = {
   cancelled: 'Cancelled',
 };
 
-export default function TaskDetails() {
+interface TaskDetailsProps {
+  taskId: string;
+}
+
+export default function TaskDetails({ taskId }: TaskDetailsProps) {
   const theme = useTheme();
+  const { closeSecondarySidebar } = useLayout();
   const {
-    getSelectedTask,
-    selectTask,
+    tasks,
     updateTask,
     completeTask,
     addSubtask,
@@ -84,7 +75,7 @@ export default function TaskDetails() {
     labels,
   } = useTask();
 
-  const task = getSelectedTask();
+  const task = tasks.find((t) => t.id === taskId);
   const [newSubtask, setNewSubtask] = useState('');
   const [newComment, setNewComment] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -93,7 +84,13 @@ export default function TaskDetails() {
   const [statusAnchor, setStatusAnchor] = useState<null | HTMLElement>(null);
   const [priorityAnchor, setPriorityAnchor] = useState<null | HTMLElement>(null);
 
-  if (!task) return null;
+  if (!task) {
+    return (
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">Task not found</Typography>
+        </Box>
+    );
+  }
 
   const project = projects.find((p) => p.id === task.projectId);
   const taskLabels = labels.filter((l) => task.labels.includes(l.id));
@@ -101,11 +98,6 @@ export default function TaskDetails() {
   const subtaskProgress = task.subtasks.length > 0
     ? (completedSubtasks / task.subtasks.length) * 100
     : 0;
-
-  const handleClose = () => {
-    selectTask(null);
-    setIsEditing(false);
-  };
 
   const handleStartEdit = () => {
     setEditTitle(task.title);
@@ -146,17 +138,7 @@ export default function TaskDetails() {
   };
 
   return (
-    <Drawer
-      anchor="right"
-      open={!!task}
-      onClose={handleClose}
-      PaperProps={{
-        sx: {
-          width: DRAWER_WIDTH,
-          borderLeft: `1px solid ${theme.palette.divider}`,
-        },
-      }}
-    >
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <Box
         sx={{
@@ -187,7 +169,7 @@ export default function TaskDetails() {
           <IconButton size="small" onClick={handleStartEdit}>
             <EditIcon fontSize="small" />
           </IconButton>
-          <IconButton size="small" onClick={handleClose}>
+          <IconButton size="small" onClick={closeSecondarySidebar}>
             <CloseIcon />
           </IconButton>
         </Box>
@@ -553,6 +535,6 @@ export default function TaskDetails() {
           </MenuItem>
         ))}
       </Menu>
-    </Drawer>
+    </Box>
   );
 }
