@@ -57,61 +57,102 @@ function DayCell({ date, tasks, isCurrentMonth, onTaskClick, onAddTask }: DayCel
   const maxVisible = 3;
   const visibleTasks = tasks.slice(0, maxVisible);
   const moreCount = tasks.length - maxVisible;
+  const hasTasks = tasks.length > 0;
 
   return (
     <Box
       sx={{
-        minHeight: 120,
+        minHeight: 110,
         p: 1,
         borderRight: `1px solid ${theme.palette.divider}`,
         borderBottom: `1px solid ${theme.palette.divider}`,
         backgroundColor: !isCurrentMonth
           ? alpha(theme.palette.text.primary, 0.02)
-          : 'transparent',
+          : today 
+            ? alpha(theme.palette.primary.main, 0.04)
+            : 'transparent',
+        transition: 'all 0.2s ease',
+        position: 'relative',
         '&:hover': {
-          backgroundColor: alpha(theme.palette.primary.main, 0.02),
+          backgroundColor: alpha(theme.palette.primary.main, 0.06),
+          '& .add-task-btn': {
+            opacity: 1,
+          },
         },
       }}
     >
+      {/* Today indicator line */}
+      {today && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 2,
+            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.main, 0.3)})`,
+          }}
+        />
+      )}
+      
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          mb: 0.5,
+          mb: 0.75,
         }}
       >
-        <Typography
-          variant="body2"
-          sx={{
-            width: 28,
-            height: 28,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '50%',
-            fontWeight: today ? 600 : 400,
-            backgroundColor: today ? theme.palette.primary.main : 'transparent',
-            color: today
-              ? '#fff'
-              : isCurrentMonth
-              ? 'text.primary'
-              : 'text.disabled',
-          }}
-        >
-          {format(date, 'd')}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              width: 26,
+              height: 26,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              fontWeight: today ? 700 : isCurrentMonth ? 500 : 400,
+              backgroundColor: today ? theme.palette.primary.main : 'transparent',
+              color: today
+                ? theme.palette.primary.contrastText
+                : isCurrentMonth
+                ? 'text.primary'
+                : 'text.disabled',
+              fontSize: '0.8rem',
+              boxShadow: today ? `0 2px 8px ${alpha(theme.palette.primary.main, 0.4)}` : 'none',
+            }}
+          >
+            {format(date, 'd')}
+          </Typography>
+          {hasTasks && !today && (
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                backgroundColor: theme.palette.primary.main,
+                opacity: 0.6,
+              }}
+            />
+          )}
+        </Box>
         <IconButton
           size="small"
+          className="add-task-btn"
           onClick={() => onAddTask(date)}
           sx={{
             opacity: 0,
-            transition: 'opacity 0.2s',
-            '&:hover': { opacity: 1 },
-            '.MuiBox-root:hover &': { opacity: 0.5 },
+            transition: 'opacity 0.2s, background-color 0.2s',
+            width: 24,
+            height: 24,
+            '&:hover': { 
+              backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            },
           }}
         >
-          <AddIcon fontSize="small" />
+          <AddIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -120,13 +161,16 @@ function DayCell({ date, tasks, isCurrentMonth, onTaskClick, onAddTask }: DayCel
             key={task.id}
             onClick={() => onTaskClick(task.id)}
             sx={{
-              p: 0.5,
-              borderRadius: 1,
-              backgroundColor: alpha(priorityColors[task.priority], 0.15),
-              borderLeft: `3px solid ${priorityColors[task.priority]}`,
+              py: 0.25,
+              px: 0.5,
+              borderRadius: 0.75,
+              backgroundColor: alpha(priorityColors[task.priority], 0.12),
+              borderLeft: `2px solid ${priorityColors[task.priority]}`,
               cursor: 'pointer',
+              transition: 'all 0.15s ease',
               '&:hover': {
-                backgroundColor: alpha(priorityColors[task.priority], 0.25),
+                backgroundColor: alpha(priorityColors[task.priority], 0.2),
+                transform: 'translateX(2px)',
               },
             }}
           >
@@ -138,6 +182,7 @@ function DayCell({ date, tasks, isCurrentMonth, onTaskClick, onAddTask }: DayCel
                 fontWeight: 500,
                 textDecoration: task.status === 'done' ? 'line-through' : 'none',
                 color: task.status === 'done' ? 'text.secondary' : 'text.primary',
+                opacity: task.status === 'done' ? 0.6 : 1,
               }}
             >
               {task.title}
@@ -145,7 +190,15 @@ function DayCell({ date, tasks, isCurrentMonth, onTaskClick, onAddTask }: DayCel
           </Box>
         ))}
         {moreCount > 0 && (
-          <Typography variant="caption" color="text.secondary" sx={{ pl: 0.5 }}>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              pl: 0.5, 
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              fontSize: '0.65rem',
+            }}
+          >
             +{moreCount} more
           </Typography>
         )}

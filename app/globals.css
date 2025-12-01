@@ -14,10 +14,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: radial-gradient(circle at top right, rgba(255, 199, 0, 0.18), transparent 50%),
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.5), transparent 40%),
-    linear-gradient(180deg, #fff7ee 0%, #ffe550 60%, #fffefa 100%);
+  background: radial-gradient(circle at top right, rgba(255, 199, 0, 0.12), transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08), transparent 40%),
+    linear-gradient(180deg, #fff7ee 0%, #fffbf5 50%, #ffffff 100%);
   color: #1a1a1a;
+  min-height: 100vh;
 }
 
 a {
@@ -27,8 +28,8 @@ a {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -36,22 +37,30 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: rgba(0, 0, 0, 0.25);
 }
 
-/* Dark mode scrollbar */
+/* Dark mode styles */
 @media (prefers-color-scheme: dark) {
+  html, body {
+    background: radial-gradient(circle at top right, rgba(255, 199, 0, 0.08), transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.06), transparent 40%),
+      linear-gradient(180deg, #0c0c0c 0%, #121212 50%, #1a1a1a 100%);
+    color: #fafafa;
+  }
+
   ::-webkit-scrollbar-thumb {
-    background: #4a4a4a;
+    background: rgba(255, 255, 255, 0.15);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #5a5a5a;
+    background: rgba(255, 255, 255, 0.25);
   }
 }
 
@@ -63,5 +72,51 @@ a {
 
 /* Selection styles */
 ::selection {
-  background-color: rgba(255, 199, 0, 0.4);
+  background-color: rgba(255, 199, 0, 0.3);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Prevent transition on page load */
+.preload * {
+  transition: none !important;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(0,0,0,0.06) 25%, 
+    rgba(0,0,0,0.1) 50%, 
+    rgba(0,0,0,0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

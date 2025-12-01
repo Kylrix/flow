@@ -130,6 +130,14 @@ export default function FocusMode() {
 
   const progress = ((initialTime - timeLeft) / initialTime) * 100;
 
+  // Preset durations
+  const presets = [
+    { label: '15m', value: 15 * 60 },
+    { label: '25m', value: 25 * 60 },
+    { label: '45m', value: 45 * 60 },
+    { label: '60m', value: 60 * 60 },
+  ];
+
   return (
     <Box
       sx={{
@@ -140,10 +148,20 @@ export default function FocusMode() {
         justifyContent: 'center',
         p: 3,
         position: 'relative',
+        background: isActive && !isPaused 
+          ? `radial-gradient(circle at center, ${theme.palette.primary.main}08 0%, transparent 70%)`
+          : 'transparent',
+        transition: 'background 0.5s ease',
       }}
     >
       <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 1 }}>
-        <IconButton onClick={toggleFullscreen}>
+        <IconButton 
+          onClick={toggleFullscreen}
+          sx={{ 
+            bgcolor: theme.palette.action.hover,
+            '&:hover': { bgcolor: theme.palette.action.selected },
+          }}
+        >
           {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
         </IconButton>
       </Box>
@@ -153,29 +171,43 @@ export default function FocusMode() {
           Focus Mode
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Stay in the flow
+          {isActive ? (isPaused ? 'Take a breath...' : 'Deep work in progress') : 'Ready to focus?'}
         </Typography>
       </Box>
 
       {/* Timer Circle */}
-      <Box sx={{ position: 'relative', display: 'inline-flex', mb: 6 }}>
+      <Box sx={{ position: 'relative', display: 'inline-flex', mb: 4 }}>
+        {/* Outer glow when active */}
+        {isActive && !isPaused && (
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: -20,
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${theme.palette.primary.main}20 0%, transparent 70%)`,
+              animation: 'pulse 3s ease-in-out infinite',
+            }}
+          />
+        )}
         <CircularProgress
           variant="determinate"
           value={100}
-          size={300}
-          thickness={2}
-          sx={{ color: theme.palette.action.hover }}
+          size={280}
+          thickness={3}
+          sx={{ color: theme.palette.divider }}
         />
         <CircularProgress
           variant="determinate"
           value={progress}
-          size={300}
-          thickness={2}
+          size={280}
+          thickness={3}
           sx={{
-            color: theme.palette.primary.main,
+            color: isActive && !isPaused ? theme.palette.primary.main : theme.palette.grey[400],
             position: 'absolute',
             left: 0,
             strokeLinecap: 'round',
+            transition: 'color 0.3s ease',
+            filter: isActive && !isPaused ? `drop-shadow(0 0 8px ${theme.palette.primary.main}60)` : 'none',
           }}
         />
         <Box
@@ -191,14 +223,53 @@ export default function FocusMode() {
             flexDirection: 'column',
           }}
         >
-          <Typography variant="h1" component="div" fontWeight="bold" sx={{ fontSize: '5rem' }}>
+          <Typography 
+            variant="h1" 
+            component="div" 
+            fontWeight="700" 
+            sx={{ 
+              fontSize: { xs: '3.5rem', sm: '4.5rem' },
+              fontVariantNumeric: 'tabular-nums',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {formatTime(timeLeft)}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            {isActive ? (isPaused ? 'PAUSED' : 'FOCUSING') : 'READY'}
-          </Typography>
+          <Chip
+            label={isActive ? (isPaused ? 'PAUSED' : 'FOCUSING') : 'READY'}
+            size="small"
+            color={isActive && !isPaused ? 'primary' : 'default'}
+            sx={{ 
+              mt: 1,
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+            }}
+          />
         </Box>
       </Box>
+
+      {/* Duration Presets - only show when not active */}
+      {!isActive && (
+        <Stack direction="row" spacing={1} sx={{ mb: 4 }}>
+          {presets.map((preset) => (
+            <Button
+              key={preset.label}
+              variant={initialTime === preset.value ? 'contained' : 'outlined'}
+              size="small"
+              onClick={() => {
+                setInitialTime(preset.value);
+                setTimeLeft(preset.value);
+              }}
+              sx={{ 
+                minWidth: 56,
+                borderRadius: 2,
+              }}
+            >
+              {preset.label}
+            </Button>
+          ))}
+        </Stack>
+      )}
 
       {/* Selected Task */}
       <Box sx={{ mb: 4, width: '100%', maxWidth: 500 }}>

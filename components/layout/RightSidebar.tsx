@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Drawer, useTheme, useMediaQuery } from '@mui/material';
+import { Drawer, Box, IconButton, useTheme, useMediaQuery, alpha } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import { useLayout } from '@/context/LayoutContext';
 import TaskDetails from '@/components/tasks/TaskDetails';
 import EventDetails from '@/components/events/EventDetails';
 
-const DRAWER_WIDTH = 420;
+const DRAWER_WIDTH = 440;
 
 export default function RightSidebar() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { secondarySidebar, closeSecondarySidebar } = useLayout();
   const { isOpen, type, itemId, data } = secondarySidebar;
 
@@ -33,27 +34,74 @@ export default function RightSidebar() {
       open={isOpen}
       onClose={closeSecondarySidebar}
       variant={isMobile ? 'temporary' : 'persistent'}
+      ModalProps={{
+        keepMounted: true, // Better mobile performance
+      }}
       PaperProps={{
         sx: {
           width: isMobile ? '100%' : DRAWER_WIDTH,
-          borderLeft: `1px solid ${theme.palette.divider}`,
-          boxShadow: '-4px 0 20px rgba(0,0,0,0.1)',
-          background: theme.palette.background.paper,
-          zIndex: theme.zIndex.appBar + 1, // Ensure it's above normal content but below modal dialogs if any
+          maxWidth: '100vw',
+          borderLeft: isMobile ? 'none' : `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+          boxShadow: isMobile 
+            ? 'none' 
+            : `-8px 0 32px ${alpha(theme.palette.common.black, 0.08)}`,
+          background: theme.palette.mode === 'light'
+            ? `linear-gradient(180deg, ${theme.palette.background.paper} 0%, ${alpha(theme.palette.primary.main, 0.02)} 100%)`
+            : theme.palette.background.paper,
+          zIndex: theme.zIndex.drawer + 2,
+          backdropFilter: 'blur(20px)',
         },
       }}
       sx={{
-        width: isOpen ? DRAWER_WIDTH : 0,
+        width: isOpen && !isMobile ? DRAWER_WIDTH : 0,
         flexShrink: 0,
         transition: theme.transitions.create(['width'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
+          easing: theme.transitions.easing.easeInOut,
+          duration: theme.transitions.duration.standard,
         }),
       }}
     >
+      {/* Close button for mobile */}
+      {isMobile && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            zIndex: 1,
+          }}
+        >
+          <IconButton
+            onClick={closeSecondarySidebar}
+            sx={{
+              bgcolor: alpha(theme.palette.text.primary, 0.05),
+              '&:hover': {
+                bgcolor: alpha(theme.palette.text.primary, 0.1),
+              },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      )}
+      
       {/* Spacer for AppBar if persistent */}
-      {!isMobile && <div style={{ ...theme.mixins.toolbar }} />}
-      {content}
+      {!isMobile && <Box sx={{ ...theme.mixins.toolbar }} />}
+      
+      {/* Content with fade animation */}
+      <Box
+        sx={{
+          height: '100%',
+          overflow: 'auto',
+          animation: isOpen ? 'fadeIn 0.2s ease-out' : 'none',
+          '@keyframes fadeIn': {
+            from: { opacity: 0, transform: 'translateX(20px)' },
+            to: { opacity: 1, transform: 'translateX(0)' },
+          },
+        }}
+      >
+        {content}
+      </Box>
     </Drawer>
   );
 }
