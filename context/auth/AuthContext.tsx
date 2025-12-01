@@ -149,8 +149,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, logout, checkSession }}>
-      {showAuthOverlay ? (
+    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, logout, checkSession, openLoginPopup }}>
+      {showAuthOverlay && !isOnPublicRoute ? (
         <Box sx={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
           {/* Blurred Background Content */}
           <Box sx={{ filter: 'blur(8px)', pointerEvents: 'none', height: '100%' }}>
@@ -197,7 +197,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             <Button
               variant="contained"
               size="large"
-              onClick={handleLogin}
+              onClick={openLoginPopup}
               sx={{
                 px: 4,
                 py: 1.5,

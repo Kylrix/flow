@@ -37,7 +37,7 @@ import { eventPermissions } from '@/lib/permissions';
 export default function EventPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const theme = useTheme();
-  const { user, isAuthenticated, checkSession } = useAuth();
+  const { user, isAuthenticated, openLoginPopup } = useAuth();
   
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,7 +111,7 @@ export default function EventPage() {
 
   const handleRegister = async () => {
     if (!isAuthenticated) {
-        checkSession();
+        openLoginPopup();
         return;
     }
 
@@ -197,7 +197,7 @@ export default function EventPage() {
               {!isAuthenticated && ' Sign in to check if you have access.'}
             </Typography>
             {!isAuthenticated ? (
-              <Button variant="contained" onClick={() => checkSession()} sx={{ mr: 2 }}>
+              <Button variant="contained" onClick={openLoginPopup} sx={{ mr: 2 }}>
                 Sign In
               </Button>
             ) : null}
