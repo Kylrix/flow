@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pino', 'thread-stream', '@walletconnect/logger'],
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        pino: false,
+        'thread-stream': false,
+      };
+    }
+    return config;
+  },
   reactCompiler: true,
   images: {
     remotePatterns: [
