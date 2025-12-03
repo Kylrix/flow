@@ -50,6 +50,7 @@ import {
 } from '@mui/icons-material';
 import { useThemeMode } from '@/theme';
 import { CampConnectButton } from '../origin/CampConnectButton';
+import { useSettings } from '@/hooks/useSettings';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -134,6 +135,7 @@ const shortcuts = [
 export default function SettingsPanel() {
   const theme = useTheme();
   const { mode, setMode } = useThemeMode();
+  const { userSettings, updateSettings } = useSettings();
   const [tabValue, setTabValue] = useState(0);
 
   // Settings state
@@ -594,6 +596,25 @@ export default function SettingsPanel() {
               <Box sx={{ mb: 3 }}>
                 <CampConnectButton />
               </Box>
+
+              <Divider sx={{ my: 4 }} />
+
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                AI Configuration
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Configure your personal API keys for AI features.
+              </Typography>
+              
+              <TextField
+                fullWidth
+                label="Google Gemini API Key"
+                type="password"
+                value={userSettings.customGeminiKey || ''}
+                onChange={(e) => updateSettings({ customGeminiKey: e.target.value })}
+                helperText="Leave empty to use the system default key (if available)."
+                sx={{ mb: 3 }}
+              />
 
               <Divider sx={{ my: 4 }} />
 

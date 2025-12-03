@@ -34,11 +34,13 @@ import {
   MusicNote,
   CheckCircle,
   RadioButtonUnchecked,
+  AutoFixHigh as AutoFixHighIcon,
 } from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
 import { Task } from '@/types';
 import { focusSessions } from '@/lib/whisperrflow';
 import { useOriginFocus } from '@/hooks/useOriginFocus';
+import { useAI } from '@/hooks/useAI';
 
 export default function FocusMode() {
   const theme = useTheme();
@@ -54,6 +56,27 @@ export default function FocusMode() {
   // Origin Integration
   const { isAuthenticated, playlists, fetchPlaylists, loading: loadingPlaylists } = useOriginFocus();
   const [selectedPlaylist, setSelectedPlaylist] = useState<string>('');
+
+  // AI Integration
+  const { generate } = useAI();
+  const [isRefining, setIsRefining] = useState(false);
+
+  const handleRefineGoal = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!selectedTask) return;
+    setIsRefining(true);
+    try {
+        const duration = Math.floor(initialTime / 60);
+        const prompt = `Refine the goal '${selectedTask.title}' into a specific, measurable objective for a ${duration}-minute session. Return ONLY the refined goal string.`;
+        const result = await generate(prompt);
+        const refinedTitle = result.text.trim();
+        updateTask(selectedTask.id, { title: refinedTitle });
+    } catch (error) {
+        console.error("Failed to refine goal", error);
+    } finally {
+        setIsRefining(false);
+    }
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -332,7 +355,12 @@ export default function FocusMode() {
               <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
                 WORKING ON
               </Typography>
-              <Typography variant="h6">{selectedTask.title}</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6">{selectedTask.title}</Typography>
+                  <IconButton size="small" onClick={handleRefineGoal} disabled={isRefining} title="Refine goal with AI">
+                      {isRefining ? <CircularProgress size={16} /> : <AutoFixHighIcon fontSize="small" />}
+                  </IconButton>
+              </Box>
             </Box>
             <IconButton
               color={selectedTask.status === 'done' ? 'success' : 'default'}

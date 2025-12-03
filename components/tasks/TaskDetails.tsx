@@ -21,6 +21,7 @@ import {
   useTheme,
   alpha,
   Paper,
+  CircularProgress,
 } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -36,12 +37,14 @@ import {
   Event as EventIcon,
   VideoCall as MeetingIcon,
   Send as SendIcon,
+  AutoFixHigh as AutoFixHighIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useTask } from '@/context/TaskContext';
 import { Priority, TaskStatus } from '@/types';
 import { useLayout } from '@/context/LayoutContext';
 import { useOriginSocial } from '@/hooks/useOriginSocial';
+import { useAI } from '@/hooks/useAI';
 
 const priorityColors: Record<Priority, string> = {
   low: '#94a3b8',
@@ -85,6 +88,35 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
   const [editDescription, setEditDescription] = useState('');
   const [statusAnchor, setStatusAnchor] = useState<null | HTMLElement>(null);
   const [priorityAnchor, setPriorityAnchor] = useState<null | HTMLElement>(null);
+
+  // AI Integration
+  const { generate } = useAI();
+  const [isGeneratingSubtasks, setIsGeneratingSubtasks] = useState(false);
+
+  const handleGenerateSubtasks = async () => {
+    if (!task?.title) return;
+    setIsGeneratingSubtasks(true);
+    try {
+      const prompt = `You are a Project Manager. The user wants to '${task.title}'. Generate a JSON array of 5 concrete, actionable sub-tasks. Return ONLY the JSON array of strings.`;
+      const result = await generate(prompt);
+      const text = result.text;
+      // Clean up markdown code blocks if present
+      const jsonString = text.replace(/```json\n|\n```/g, '').replace(/```/g, '');
+      const subtasks = JSON.parse(jsonString);
+      
+      if (Array.isArray(subtasks)) {
+        subtasks.forEach((st: string) => {
+            if (typeof st === 'string') {
+                addSubtask(task.id, st);
+            }
+        });
+      }
+    } catch (error) {
+      console.error("Failed to generate subtasks", error);
+    } finally {
+      setIsGeneratingSubtasks(false);
+    }
+  };
 
   // Origin Social Context
   const { isAuthenticated, socialContext, fetchSocialContext, loading: loadingSocial } = useOriginSocial();
@@ -426,6 +458,15 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
               onChange={(e) => setNewSubtask(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddSubtask()}
             />
+            <IconButton 
+                size="small" 
+                onClick={handleGenerateSubtasks} 
+                disabled={isGeneratingSubtasks}
+                color="primary"
+                title="Generate subtasks with AI"
+            >
+                {isGeneratingSubtasks ? <CircularProgress size={20} /> : <AutoFixHighIcon />}
+            </IconButton>
             <IconButton size="small" onClick={handleAddSubtask} disabled={!newSubtask.trim()}>
               <AddIcon />
             </IconButton>
