@@ -32,12 +32,14 @@ import {
   Help as HelpIcon,
   Keyboard as KeyboardIcon,
   Apps as AppsIcon,
+  AutoAwesome as AutoAwesomeIcon,
 } from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
 import { useAuth } from '@/context/auth/AuthContext';
 import { useThemeMode } from '@/theme';
 import { Logo } from '@/components/common';
 import { ECOSYSTEM_APPS } from '@/lib/constants';
+import AICommandModal from '@/components/ai/AICommandModal';
 
 function getInitials(user: { name?: string | null; email?: string | null } | null) {
   const text = user?.name?.trim() || user?.email?.split('@')[0] || '';
@@ -58,6 +60,7 @@ export default function AppBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [appsAnchorEl, setAppsAnchorEl] = useState<null | HTMLElement>(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -158,6 +161,23 @@ export default function AppBar() {
 
         {/* Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          {/* AI Assistant Button */}
+          <Tooltip title="AI Assistant">
+            <IconButton
+              color="secondary"
+              onClick={() => setAiModalOpen(true)}
+              sx={{
+                backgroundColor: alpha(theme.palette.secondary.main, 0.1),
+                color: theme.palette.secondary.main,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.2),
+                },
+              }}
+            >
+              <AutoAwesomeIcon />
+            </IconButton>
+          </Tooltip>
+
           {/* Add Task Button */}
           <Tooltip title="Add task (Ctrl+N)">
             <IconButton
@@ -438,6 +458,7 @@ export default function AppBar() {
           </MenuItem>
         </Menu>
       </Toolbar>
+      <AICommandModal open={aiModalOpen} onClose={() => setAiModalOpen(false)} />
     </MuiAppBar>
   );
 }

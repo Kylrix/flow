@@ -222,7 +222,7 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
         {!result ? (
           <Box sx={{ mt: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Describe what you want to do, and I'll help you create it.
+              Describe what you want to do, and I&apos;ll help you create it.
             </Typography>
             <TextField
               autoFocus
@@ -244,7 +244,7 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
         ) : (
           <Box sx={{ mt: 1 }}>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Here's what I found:
+              Here&apos;s what I found:
             </Typography>
             
             <Card variant="outlined" sx={{ mt: 2, borderRadius: 2, position: 'relative', overflow: 'visible' }}>
@@ -285,9 +285,11 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
                   <Box sx={{ display: 'flex', gap: 1, mt: 1, color: 'text.secondary' }}>
                     <ScheduleIcon fontSize="small" />
                     <Typography variant="body2">
-                      {result.intent === 'create_task' 
+                      {result.intent === 'create_task' && result.data.dueDate
                         ? new Date(result.data.dueDate).toLocaleString()
-                        : `${new Date(result.data.startTime).toLocaleString()} - ${new Date(result.data.endTime).toLocaleTimeString()}`
+                        : result.intent === 'create_event'
+                        ? `${new Date(result.data.startTime).toLocaleString()} - ${new Date(result.data.endTime).toLocaleTimeString()}`
+                        : ''
                       }
                     </Typography>
                   </Box>
