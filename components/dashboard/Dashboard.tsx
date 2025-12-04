@@ -355,8 +355,8 @@ export default function Dashboard() {
                 ))}
               </Box>
             ) : (
-              <Box sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
-                <CheckIcon sx={{ fontSize: 48, mb: 1, opacity: 0.5 }} />
+              <Box sx={{ textAlign: 'center', py: 4, color: 'text.secondary', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CheckIcon size={48} style={{ marginBottom: 8, opacity: 0.5 }} />
                 <Typography>No tasks due today!</Typography>
                 <Button
                   variant="outlined"
@@ -437,7 +437,7 @@ export default function Dashboard() {
                   justifyContent: 'center',
                 }}
               >
-                <StreakIcon sx={{ color: theme.palette.warning.main }} />
+                <StreakIcon color={theme.palette.warning.main} />
               </Box>
               <Box>
                 <Typography variant="body2" color="text.secondary">
@@ -461,7 +461,7 @@ export default function Dashboard() {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <TipIcon color="primary" />
+              <TipIcon color={theme.palette.primary.main} />
               <Typography variant="subtitle2" fontWeight={600} color="primary">
                 Productivity Tip
               </Typography>

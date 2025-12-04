@@ -18,16 +18,16 @@ import {
 } from '@mui/material';
 import {
   Flag as FlagIcon,
-  Schedule as ScheduleIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  MoreVert as MoreIcon,
-  ChecklistRtl as SubtaskIcon,
-  Comment as CommentIcon,
-  Attachment as AttachmentIcon,
+  Clock as ScheduleIcon,
+  Pencil as EditIcon,
+  Trash2 as DeleteIcon,
+  MoreVertical as MoreIcon,
+  ListTodo as SubtaskIcon,
+  MessageSquare as CommentIcon,
+  Paperclip as AttachmentIcon,
   Archive as ArchiveIcon,
-  ContentCopy as CopyIcon,
-} from '@mui/icons-material';
+  Copy as CopyIcon,
+} from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, isThisWeek } from 'date-fns';
 import { Task, Priority } from '@/types';
 import { useTask } from '@/context/TaskContext';
@@ -209,7 +209,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
               {task.priority !== 'medium' && (
                 <Tooltip title={`${priorityLabels[task.priority]} priority`}>
                   <Chip
-                    icon={<FlagIcon sx={{ fontSize: 14 }} />}
+                    icon={<FlagIcon size={14} />}
                     label={priorityLabels[task.priority]}
                     size="small"
                     sx={{
@@ -227,7 +227,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
               {/* Due Date */}
               {task.dueDate && (
                 <Chip
-                  icon={<ScheduleIcon sx={{ fontSize: 14 }} />}
+                  icon={<ScheduleIcon size={14} />}
                   label={formatDueDate(new Date(task.dueDate))}
                   size="small"
                   sx={{
@@ -272,7 +272,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <SubtaskIcon sx={{ fontSize: 14 }} />
+                    <SubtaskIcon size={14} />
                     <span>
                       {completedSubtasks}/{totalSubtasks}
                     </span>
@@ -292,7 +292,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <CommentIcon sx={{ fontSize: 14 }} />
+                    <CommentIcon size={14} />
                     <span>{task.comments.length}</span>
                   </Box>
                 </Tooltip>
@@ -310,7 +310,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <AttachmentIcon sx={{ fontSize: 14 }} />
+                    <AttachmentIcon size={14} />
                     <span>{task.attachments.length}</span>
                   </Box>
                 </Tooltip>
