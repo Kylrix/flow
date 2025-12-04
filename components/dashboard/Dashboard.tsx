@@ -335,14 +335,14 @@ export default function Dashboard() {
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <ScheduleIcon color="primary" />
+                <ScheduleIcon color={theme.palette.primary.main} />
                 <Typography variant="h6" fontWeight={600}>
                   Today&apos;s Tasks
                 </Typography>
                 <Chip label={todayTasks.length} size="small" color="primary" />
               </Box>
               <Button
-                endIcon={<ArrowIcon />}
+                endIcon={<ArrowIcon size={16} />}
                 onClick={() => handleViewTasks('today')}
               >
                 View All
