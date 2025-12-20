@@ -64,6 +64,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check if current route is public
   const isOnPublicRoute = isPublicRoute(pathname);
 
+  const attemptSilentAuth = useCallback(async () => {
+    if (typeof window === 'undefined') return;
+
+    return new Promise<void>((resolve) => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://${APPWRITE_CONFIG.AUTH.SUBDOMAIN}.${APPWRITE_CONFIG.AUTH.DOMAIN}/silent-check`;
+      iframe.style.display = 'none';
+
+      const timeout = setTimeout(() => {
+        cleanup();
+        resolve();
+      }, 5000);
+
+      const handleIframeMessage = (event: MessageEvent) => {
+        if (event.origin !== `https://${APPWRITE_CONFIG.AUTH.SUBDOMAIN}.${APPWRITE_CONFIG.AUTH.DOMAIN}`) return;
+
+        if (event.data?.type === 'idm:auth-status' && event.data.status === 'authenticated') {
+          console.log('Silent auth discovered active session in whisperrflow');
+          checkSession();
+          cleanup();
+          resolve();
+        } else if (event.data?.type === 'idm:auth-status') {
+          cleanup();
+          resolve();
+        }
+      };
+
+      const cleanup = () => {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handleIframeMessage);
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      };
+
+      window.addEventListener('message', handleIframeMessage);
+      document.body.appendChild(iframe);
+    });
+  }, []);
+
   const checkSession = useCallback(async () => {
     try {
       const currentUser = await account.get();
@@ -73,17 +113,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
         authWindow.close();
         setAuthWindow(null);
       }
-    } catch (error) {
-      console.warn('No active session found', error);
-      setUser(null);
-      // Only show auth overlay if NOT on a public route
-      if (!isPublicRoute(pathname)) {
-        setShowAuthOverlay(true);
+    } catch (error: any) {
+      // First try silent recovery
+      await attemptSilentAuth();
+
+      // Re-check after silent attempt (attemptSilentAuth calls checkSession but we want to be sure here)
+      try {
+        const retryUser = await account.get();
+        setUser(retryUser);
+        setShowAuthOverlay(false);
+        return;
+      } catch {
+        // Fallback to offline awareness
+        const isNetworkError = !error.response && error.message?.includes('Network Error') || error.message?.includes('Failed to fetch');
+
+        if (!isNetworkError) {
+          setUser(null);
+          if (!isPublicRoute(pathname)) {
+            setShowAuthOverlay(true);
+          }
+        } else {
+          console.warn('Network issue detected in whisperrflow. Retaining last state.');
+        }
       }
     } finally {
       setIsLoading(false);
     }
-  }, [authWindow, pathname]);
+  }, [authWindow, pathname, attemptSilentAuth]);
 
   useEffect(() => {
     checkSession();
@@ -126,7 +182,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
-    
+
     const win = window.open(
       AUTH_URL,
       'WhisperrAuth',
@@ -164,7 +220,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           <Box sx={{ filter: 'blur(8px)', pointerEvents: 'none', height: '100%' }}>
             {children}
           </Box>
-          
+
           {/* Auth Overlay */}
           <Backdrop
             open={true}

@@ -98,7 +98,7 @@ export default function AppBar() {
           color="inherit"
           aria-label="toggle sidebar"
           onClick={toggleSidebar}
-          sx={{ 
+          sx={{
             color: theme.palette.text.primary,
             display: { xs: 'none', md: 'flex' },
           }}
@@ -274,7 +274,12 @@ export default function AppBar() {
             </ListItemIcon>
             <ListItemText>Profile</ListItemText>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={() => {
+            handleClose();
+            const domain = process.env.NEXT_PUBLIC_DOMAIN || 'whisperrnote.space';
+            const authSub = process.env.NEXT_PUBLIC_AUTH_SUBDOMAIN || 'accounts';
+            window.location.href = `https://${authSub}.${domain}/settings?source=${encodeURIComponent(window.location.origin)}`;
+          }}>
             <ListItemIcon>
               <SettingsIcon size={20} />
             </ListItemIcon>
