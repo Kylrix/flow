@@ -39,29 +39,31 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
     background: {
       default: mode === 'light' ? '#f8f8f8' : '#0f0f0f',
-      paper: mode === 'light' ? '#ffffff' : '#1a1a1a',
+      paper: mode === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(26, 26, 26, 0.75)',
     },
     text: {
       primary: mode === 'light' ? '#0f0a08' : '#faf8f6',
-      secondary: mode === 'light' ? '#3d2f26' : '#c4b5a8',
+      secondary: mode === 'light' ? '#6b5b4f' : '#a69080',
     },
-    divider: mode === 'light' ? '#e8e8e8' : '#2a2a2a',
+    divider: mode === 'light' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)',
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Outfit", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.5rem',
-      fontWeight: 700,
+      fontWeight: 800,
+      letterSpacing: '-0.02em',
       lineHeight: 1.2,
     },
     h2: {
       fontSize: '2rem',
-      fontWeight: 600,
+      fontWeight: 700,
+      letterSpacing: '-0.01em',
       lineHeight: 1.3,
     },
     h3: {
       fontSize: '1.5rem',
-      fontWeight: 600,
+      fontWeight: 700,
       lineHeight: 1.4,
     },
     h4: {
@@ -113,51 +115,51 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 20,
   },
   shadows: [
     'none',
-    '0px 1px 2px rgba(0, 0, 0, 0.05)',
-    '0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)',
-    '0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    '0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    '0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    '0px 25px 50px -12px rgba(0, 0, 0, 0.25)',
-  ],
+    '0 2px 4px rgba(0,0,0,0.02)',
+    '0 4px 8px rgba(0,0,0,0.04)',
+    '0 8px 16px rgba(0,0,0,0.08)',
+    '0 12px 24px rgba(0,0,0,0.12)',
+    '0 16px 32px rgba(0,0,0,0.16)',
+    '0 20px 40px rgba(0,0,0,0.20)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+    '0 25px 50px rgba(0,0,0,0.25)',
+  ] as any,
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          scrollbarColor: '#6b6b6b #2b2b2b',
+          backgroundColor: mode === 'light' ? '#f8f8f8' : '#0f0f0f',
+          scrollbarColor: '#ffc700 transparent',
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-            width: 8,
-            height: 8,
+            width: 5,
+            height: 5,
           },
           '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-            borderRadius: 8,
-            backgroundColor: '#6b6b6b',
-            minHeight: 24,
-          },
-          '&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent',
+            borderRadius: 10,
+            backgroundColor: 'rgba(255, 199, 0, 0.3)',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 199, 0, 0.5)',
+            },
           },
         },
       },
@@ -165,109 +167,88 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 10,
-          padding: '10px 20px',
-          fontWeight: 600,
+          borderRadius: 14,
+          padding: '12px 24px',
+          fontWeight: 700,
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          textTransform: 'none',
         },
-        contained: ({ theme }) => ({
-          backgroundImage:
-            theme.palette.mode === 'light'
-              ? 'linear-gradient(135deg, #fff59d, #ffc700)'
-              : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.65)}, ${
-                  theme.palette.primary.main
-                })`,
+        contained: ({ theme }: { theme: any }) => ({
+          background: 'linear-gradient(135deg, #FFD700 0%, #FFC700 100%)',
           color: '#1a1a1a',
-          boxShadow: '0px 12px 40px rgba(0, 0, 0, 0.15)',
+          boxShadow: '0 4px 15px rgba(255, 199, 0, 0.3)',
           '&:hover': {
-            boxShadow: '0px 16px 50px rgba(0, 0, 0, 0.25)',
+            background: 'linear-gradient(135deg, #FFE066 0%, #FFCF40 100%)',
+            boxShadow: '0 8px 25px rgba(255, 199, 0, 0.4)',
+            transform: 'translateY(-1px)',
+          },
+          '&:active': {
+            transform: 'translateY(0)',
           },
         }),
         outlined: {
-          border: '1px solid',
-          borderColor: alpha('#FFC700', 0.6),
+          borderWidth: 2,
+          '&:hover': {
+            borderWidth: 2,
+          },
         },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: ({ theme }) => ({
-          backgroundColor:
-            theme.palette.mode === 'light'
-              ? 'rgba(255, 255, 255, 0.92)'
-              : 'rgba(18, 18, 18, 0.85)',
-          borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.4)}`,
-          backdropFilter: 'blur(24px)',
-          boxShadow: '0px 25px 60px rgba(0, 0, 0, 0.20)',
-        }),
       },
     },
     MuiCard: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          borderRadius: 18,
-          boxShadow:
-            theme.palette.mode === 'light'
-              ? '0px 25px 60px rgba(0, 0, 0, 0.12)'
-              : '0px 10px 40px rgba(0, 0, 0, 0.45)',
-          border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+        root: ({ theme }: { theme: any }) => ({
+          borderRadius: 24,
+          backdropFilter: 'blur(16px)',
+          backgroundColor: theme.palette.mode === 'light'
+            ? 'rgba(255, 255, 255, 0.8)'
+            : 'rgba(26, 26, 26, 0.7)',
+          border: `1px solid ${theme.palette.mode === 'light'
+            ? 'rgba(0, 0, 0, 0.05)'
+            : 'rgba(255, 255, 255, 0.05)'}`,
+          boxShadow: theme.palette.mode === 'light'
+            ? '0 10px 30px rgba(0, 0, 0, 0.05)'
+            : '0 10px 30px rgba(0, 0, 0, 0.3)',
         }),
       },
     },
-    MuiPaper: {
+    MuiAppBar: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          backgroundColor:
-            theme.palette.mode === 'light'
-              ? 'rgba(255, 255, 255, 0.95)'
-              : 'rgba(26, 26, 26, 0.85)',
-          borderRadius: 20,
-          padding: 0,
-          boxShadow:
-            theme.palette.mode === 'light'
-              ? '0px 25px 55px rgba(0, 0, 0, 0.15)'
-              : '0px 12px 40px rgba(0, 0, 0, 0.55)',
-          border: `1px solid ${alpha(theme.palette.primary.main, theme.palette.mode === 'light' ? 0.35 : 0.1)}`,
-          backdropFilter: 'blur(24px)',
-          backgroundImage:
-            theme.palette.mode === 'light'
-              ? 'linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.4))'
-              : 'none',
+        root: ({ theme }: { theme: any }) => ({
+          backgroundColor: theme.palette.mode === 'light'
+            ? 'rgba(248, 248, 248, 0.8)'
+            : 'rgba(15, 15, 15, 0.8)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: `1px solid ${theme.palette.mode === 'light'
+            ? 'rgba(0, 0, 0, 0.05)'
+            : 'rgba(255, 199, 0, 0.1)'}`,
+          boxShadow: 'none',
         }),
-      },
-    },
-    MuiChip: {
-      styleOverrides: {
-        root: {
-          fontWeight: 500,
-        },
       },
     },
     MuiDrawer: {
       styleOverrides: {
-        paper: ({ theme }) => ({
-          borderRight: 'none',
-          boxShadow: '0px 35px 80px rgba(0, 0, 0, 0.15)',
-          background:
-            theme.palette.mode === 'light'
-              ? 'linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88))'
-              : 'linear-gradient(180deg, rgba(32,32,32,0.95), rgba(24,24,24,0.90))',
+        paper: ({ theme }: { theme: any }) => ({
+          backgroundColor: theme.palette.mode === 'light'
+            ? 'rgba(255, 255, 255, 0.9)'
+            : 'rgba(18, 18, 18, 0.9)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '0 24px 24px 0',
+          border: 'none',
+          boxShadow: '20px 0 50px rgba(0, 0, 0, 0.05)',
         }),
       },
     },
     MuiListItemButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          margin: '2px 8px',
+          borderRadius: 12,
+          margin: '4px 12px',
+          fontWeight: 600,
           '&.Mui-selected': {
-            background:
-              'linear-gradient(135deg, rgba(255, 199, 0, 0.2), rgba(255, 199, 0, 0.05))',
-            boxShadow: '0px 10px 30px rgba(255, 199, 0, 0.2)',
-          },
-          '&:hover': {
-            background: 'rgba(255, 199, 0, 0.08)',
+            backgroundColor: 'rgba(255, 199, 0, 0.1)',
+            color: '#FFC700',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 199, 0, 0.15)',
+            },
           },
         },
       },
