@@ -11,7 +11,7 @@ import { useTask } from '@/context/TaskContext';
 import { useLayout } from '@/context/LayoutContext';
 import { TaskDialog } from '@/components';
 
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 256;
 const RIGHT_DRAWER_WIDTH = 420;
 
 interface MainLayoutProps {
@@ -36,8 +36,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
         display: 'flex',
         minHeight: '100vh',
         background: theme.palette.mode === 'light'
-          ? 'radial-gradient(circle at top right, rgba(255,199,0,0.35), transparent 40%), #fff8ef'
-          : '#050505',
+          ? '#f8f8f8'
+          : '#0f0f0f',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -49,9 +49,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
         component="main"
         sx={{
           flexGrow: 1,
-          px: { xs: 2, md: 3 },
-          pt: { xs: `calc(64px + 16px)`, md: `calc(64px + 24px)` },
-          pb: { xs: '100px', md: 3 },
+          px: { xs: 1, md: 2 },
+          pt: { xs: `calc(64px + 12px)`, md: `calc(64px + 16px)` },
+          pb: { xs: '80px', md: 2 },
           minHeight: '100vh',
           boxSizing: 'border-box',
           // Adjust width if sidebar is hidden
@@ -63,7 +63,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           }),
           ...(showSidebar && {
              width: `calc(100% - ${sidebarOpen ? DRAWER_WIDTH : 0}px)`,
-             ml: sidebarOpen ? 0 : 0, // Flex handles this usually, but good to be explicit if needed
+             ml: sidebarOpen ? 0 : 0, 
           }),
           ...(showRightSidebar && {
             width: `calc(100% - ${(showSidebar && sidebarOpen ? DRAWER_WIDTH : 0) + RIGHT_DRAWER_WIDTH}px)`,
@@ -75,17 +75,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
           sx={{
             background:
               theme.palette.mode === 'light'
-                ? 'linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95))'
-                : 'linear-gradient(180deg, rgba(20,20,20,0.95), rgba(16,16,16,0.95))',
-            borderRadius: { xs: 2, md: 3 },
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+                ? '#ffffff'
+                : '#1a1a1a',
+            borderRadius: { xs: 2, md: 4 },
+            border: `2px solid ${theme.palette.divider}`,
             boxShadow:
               theme.palette.mode === 'light'
-                ? '0px 30px 60px rgba(0,0,0,0.15)'
-                : '0px 20px 60px rgba(0,0,0,0.6)',
+                ? '0 8px 32px rgba(0, 0, 0, 0.08)'
+                : '0 8px 32px rgba(0, 0, 0, 0.4)',
             minHeight: '100%',
-            p: { xs: 2, md: 3 },
-            backdropFilter: 'blur(20px)',
+            p: { xs: 2, md: 4 },
             position: 'relative',
             overflow: 'hidden',
           }}

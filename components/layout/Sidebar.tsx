@@ -22,28 +22,28 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  Inbox as InboxIcon,
-  CalendarDays as TodayIcon,
-  Calendar as CalendarIcon,
-  Clock as ScheduleIcon,
-  CheckCircle2 as CompletedIcon,
-  Tag as LabelIcon,
-  Plus as AddIcon,
-  ChevronUp as ExpandLess,
-  ChevronDown as ExpandMore,
-  Star as StarIcon,
-  Kanban as KanbanIcon,
-  LayoutGrid as MatrixIcon,
-  Activity as TimelineIcon,
-  Settings as SettingsIcon,
-  LayoutDashboard as DashboardIcon,
-  ListTodo as TasksIcon,
-  CalendarRange as EventIcon,
-  Target as FocusIcon,
-} from 'lucide-react';
+  HomeIcon as DashboardIcon,
+  ListBulletIcon as TasksIcon,
+  CalendarIcon,
+  CalendarDaysIcon as EventIcon,
+  FlagIcon as FocusIcon,
+  InboxIcon,
+  CalendarDaysIcon as TodayIcon,
+  ClockIcon as ScheduleIcon,
+  CheckCircleIcon as CompletedIcon,
+  TagIcon as LabelIcon,
+  PlusIcon as AddIcon,
+  ChevronUpIcon as ExpandLess,
+  ChevronDownIcon as ExpandMore,
+  StarIcon,
+  ViewColumnsIcon as KanbanIcon,
+  TableCellsIcon as MatrixIcon,
+  ChartBarIcon as TimelineIcon,
+  Cog6ToothIcon as SettingsIcon,
+} from '@heroicons/react/24/outline';
 import { useTask } from '@/context/TaskContext';
 
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 256;
 
 interface NavItem {
   id: string;
@@ -225,18 +225,69 @@ export default function Sidebar() {
     >
       <Box sx={{ overflow: 'auto', py: 1 }}>
         {/* Main Navigation */}
-        <List dense>
+        <List dense sx={{ px: 1 }}>
           {mainNav.map((item) => (
-            <ListItem key={item.id} disablePadding>
+            <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
                 component={Link}
                 href={item.href || '#'}
                 selected={pathname === item.href}
                 sx={{
-                  borderRadius: 2,
-                  mx: 1,
+                  borderRadius: 3,
+                  py: 1.25,
                   '&.Mui-selected': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                    backgroundColor: theme.palette.primary.main,
+                    color: '#fff',
+                    '& .MuiListItemIcon-root': {
+                      color: '#fff',
+                    },
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main,
+                      opacity: 0.9,
+                    },
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 40,
+                    color: pathname === item.href ? '#fff' : theme.palette.text.secondary,
+                  }}
+                >
+                  {React.cloneElement(item.icon as React.ReactElement, { className: 'h-6 w-6' })}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.label} 
+                  primaryTypographyProps={{ 
+                    fontWeight: pathname === item.href ? 700 : 500,
+                    fontSize: '0.95rem'
+                  }} 
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+
+        <Divider sx={{ my: 2, mx: 2 }} />
+
+        {/* Smart Lists */}
+        <Typography
+          variant="overline"
+          sx={{ px: 3, color: 'text.secondary', display: 'block', mt: 1, mb: 1, fontWeight: 700 }}
+        >
+          Smart Lists
+        </Typography>
+        <List dense sx={{ px: 1 }}>
+          {smartLists.map((item) => (
+            <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                selected={pathname === '/tasks' && (filter.projectId === item.id || (item.id === 'completed' && filter.status?.includes('done')))}
+                onClick={() => handleSmartListClick(item.id)}
+                sx={{
+                  borderRadius: 3,
+                  py: 1,
+                  '&.Mui-selected': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.15),
                     color: theme.palette.primary.main,
                     '& .MuiListItemIcon-root': {
                       color: theme.palette.primary.main,
@@ -246,50 +297,19 @@ export default function Sidebar() {
               >
                 <ListItemIcon
                   sx={{
-                    minWidth: 36,
-                    color: pathname === item.href ? theme.palette.primary.main : theme.palette.text.secondary,
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-
-        <Divider sx={{ my: 1 }} />
-
-        {/* Smart Lists */}
-        <Typography
-          variant="overline"
-          sx={{ px: 2, color: 'text.secondary', display: 'block', mt: 1 }}
-        >
-          Smart Lists
-        </Typography>
-        <List dense>
-          {smartLists.map((item) => (
-            <ListItem key={item.id} disablePadding>
-              <ListItemButton
-                selected={pathname === '/tasks' && (filter.projectId === item.id || (item.id === 'completed' && filter.status?.includes('done')))}
-                onClick={() => handleSmartListClick(item.id)}
-                sx={{
-                  borderRadius: 2,
-                  mx: 1,
-                  '&.Mui-selected': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 36,
+                    minWidth: 40,
                     color: item.color || theme.palette.text.secondary,
                   }}
                 >
-                  {item.icon}
+                  {React.cloneElement(item.icon as React.ReactElement, { className: 'h-5 w-5' })}
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText 
+                  primary={item.label} 
+                  primaryTypographyProps={{ 
+                    fontWeight: 600,
+                    fontSize: '0.9rem'
+                  }} 
+                />
                 {item.badge !== undefined && item.badge > 0 && (
                   <Badge
                     badgeContent={item.badge}
@@ -299,8 +319,9 @@ export default function Sidebar() {
                         backgroundColor:
                           item.id === 'overdue'
                             ? theme.palette.error.main
-                            : alpha(theme.palette.text.primary, 0.2),
+                            : alpha(theme.palette.text.primary, 0.1),
                         color: item.id === 'overdue' ? '#fff' : theme.palette.text.primary,
+                        fontWeight: 700,
                       },
                     }}
                   />
@@ -315,64 +336,77 @@ export default function Sidebar() {
         {/* View Modes */}
         <Typography
           variant="overline"
-          sx={{ px: 2, color: 'text.secondary', display: 'block', mt: 1 }}
+          sx={{ px: 3, color: 'text.secondary', display: 'block', mt: 1, mb: 1, fontWeight: 700 }}
         >
           Views
         </Typography>
-        <List dense>
+        <List dense sx={{ px: 1 }}>
           {viewModes.map((item) => (
-            <ListItem key={item.id} disablePadding>
+            <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
                 sx={{
-                  borderRadius: 2,
-                  mx: 1,
+                  borderRadius: 3,
+                  py: 1,
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 36, color: theme.palette.text.secondary }}>
-                  {item.icon}
+                <ListItemIcon sx={{ minWidth: 40, color: theme.palette.text.secondary }}>
+                  {React.cloneElement(item.icon as React.ReactElement, { className: 'h-5 w-5' })}
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText 
+                  primary={item.label} 
+                  primaryTypographyProps={{ 
+                    fontWeight: 500,
+                    fontSize: '0.9rem'
+                  }} 
+                />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
 
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 2, mx: 2 }} />
 
         {/* Favorite Projects */}
         {favoriteProjects.length > 0 && (
           <>
             <Typography
               variant="overline"
-              sx={{ px: 2, color: 'text.secondary', display: 'block', mt: 1 }}
+              sx={{ px: 3, color: 'text.secondary', display: 'block', mt: 1, mb: 1, fontWeight: 700 }}
             >
               Favorites
             </Typography>
-            <List dense>
+            <List dense sx={{ px: 1 }}>
               {favoriteProjects.map((project) => (
-                <ListItem key={project.id} disablePadding>
+                <ListItem key={project.id} disablePadding sx={{ mb: 0.5 }}>
                   <ListItemButton
                     selected={pathname === '/tasks' && selectedProjectId === project.id}
                     onClick={() => handleProjectClick(project.id)}
                     sx={{
-                      borderRadius: 2,
-                      mx: 1,
+                      borderRadius: 3,
+                      py: 1,
                       '&.Mui-selected': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                        backgroundColor: alpha(project.color, 0.15),
                       },
                     }}
                   >
-                    <ListItemIcon sx={{ minWidth: 36 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
                       <Box
                         sx={{
-                          width: 12,
-                          height: 12,
+                          width: 10,
+                          height: 10,
                           borderRadius: '50%',
                           backgroundColor: project.color,
+                          boxShadow: `0 0 8px ${alpha(project.color, 0.5)}`,
                         }}
                       />
                     </ListItemIcon>
-                    <ListItemText primary={project.name} />
+                    <ListItemText 
+                      primary={project.name} 
+                      primaryTypographyProps={{ 
+                        fontWeight: 600,
+                        fontSize: '0.9rem'
+                      }} 
+                    />
                     <IconButton
                       size="small"
                       onClick={(e) => {
@@ -381,13 +415,13 @@ export default function Sidebar() {
                       }}
                       sx={{ color: theme.palette.warning.main }}
                     >
-                      <StarIcon size={16} />
+                      <StarIcon className="h-4 w-4" />
                     </IconButton>
                   </ListItemButton>
                 </ListItem>
               ))}
             </List>
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 2, mx: 2 }} />
           </>
         )}
 
@@ -396,47 +430,48 @@ export default function Sidebar() {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            px: 2,
+            px: 3,
             py: 0.5,
+            mb: 1,
           }}
         >
           <Typography
             variant="overline"
-            sx={{ color: 'text.secondary', flexGrow: 1, cursor: 'pointer' }}
+            sx={{ color: 'text.secondary', flexGrow: 1, cursor: 'pointer', fontWeight: 700 }}
             onClick={() => setProjectsOpen(!projectsOpen)}
           >
             Projects
           </Typography>
           <IconButton size="small" onClick={() => setProjectsOpen(!projectsOpen)}>
-            {projectsOpen ? <ExpandLess size={20} /> : <ExpandMore size={20} />}
+            {projectsOpen ? <ExpandLess className="h-4 w-4" /> : <ExpandMore className="h-4 w-4" />}
           </IconButton>
           <Tooltip title="Add project">
             <IconButton size="small">
-              <AddIcon size={20} />
+              <AddIcon className="h-4 w-4" />
             </IconButton>
           </Tooltip>
         </Box>
 
         <Collapse in={projectsOpen}>
-          <List dense>
+          <List dense sx={{ px: 1 }}>
             {regularProjects.map((project) => (
-              <ListItem key={project.id} disablePadding>
+              <ListItem key={project.id} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   selected={pathname === '/tasks' && selectedProjectId === project.id}
                   onClick={() => handleProjectClick(project.id)}
                   sx={{
-                    borderRadius: 2,
-                    mx: 1,
+                    borderRadius: 3,
+                    py: 1,
                     '&.Mui-selected': {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                      backgroundColor: alpha(project.color, 0.1),
                     },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ minWidth: 40 }}>
                     <Box
                       sx={{
-                        width: 12,
-                        height: 12,
+                        width: 10,
+                        height: 10,
                         borderRadius: '50%',
                         backgroundColor: project.color,
                       }}
@@ -444,15 +479,19 @@ export default function Sidebar() {
                   </ListItemIcon>
                   <ListItemText
                     primary={project.name}
+                    primaryTypographyProps={{ 
+                      fontWeight: 500,
+                      fontSize: '0.9rem'
+                    }}
                     secondary={
                       <LinearProgress
                         variant="determinate"
                         value={getProjectProgress(project.id)}
                         sx={{
-                          mt: 0.5,
+                          mt: 0.75,
                           height: 4,
                           borderRadius: 2,
-                          backgroundColor: alpha(project.color, 0.2),
+                          backgroundColor: alpha(project.color, 0.1),
                           '& .MuiLinearProgress-bar': {
                             backgroundColor: project.color,
                           },
@@ -460,7 +499,7 @@ export default function Sidebar() {
                       />
                     }
                   />
-                  <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ ml: 1, fontWeight: 700 }}>
                     {getProjectTaskCount(project.id)}
                   </Typography>
                 </ListItemButton>
@@ -469,38 +508,39 @@ export default function Sidebar() {
           </List>
         </Collapse>
 
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 2, mx: 2 }} />
 
         {/* Labels */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            px: 2,
+            px: 3,
             py: 0.5,
+            mb: 1,
           }}
         >
           <Typography
             variant="overline"
-            sx={{ color: 'text.secondary', flexGrow: 1, cursor: 'pointer' }}
+            sx={{ color: 'text.secondary', flexGrow: 1, cursor: 'pointer', fontWeight: 700 }}
             onClick={() => setLabelsOpen(!labelsOpen)}
           >
             Labels
           </Typography>
           <IconButton size="small" onClick={() => setLabelsOpen(!labelsOpen)}>
-            {labelsOpen ? <ExpandLess size={20} /> : <ExpandMore size={20} />}
+            {labelsOpen ? <ExpandLess className="h-4 w-4" /> : <ExpandMore className="h-4 w-4" />}
           </IconButton>
           <Tooltip title="Add label">
             <IconButton size="small">
-              <AddIcon size={20} />
+              <AddIcon className="h-4 w-4" />
             </IconButton>
           </Tooltip>
         </Box>
 
         <Collapse in={labelsOpen}>
-          <List dense>
+          <List dense sx={{ px: 1 }}>
             {labels.map((label) => (
-              <ListItem key={label.id} disablePadding>
+              <ListItem key={label.id} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   onClick={() =>
                     setFilter({
@@ -511,17 +551,23 @@ export default function Sidebar() {
                     })
                   }
                   sx={{
-                    borderRadius: 2,
-                    mx: 1,
+                    borderRadius: 3,
+                    py: 1,
                     backgroundColor: filter.labels?.includes(label.id)
-                      ? alpha(label.color, 0.12)
+                      ? alpha(label.color, 0.1)
                       : 'transparent',
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <LabelIcon color={label.color} size={20} />
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <LabelIcon style={{ color: label.color }} className="h-5 w-5" />
                   </ListItemIcon>
-                  <ListItemText primary={label.name} />
+                  <ListItemText 
+                    primary={label.name} 
+                    primaryTypographyProps={{ 
+                      fontWeight: 500,
+                      fontSize: '0.9rem'
+                    }} 
+                  />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -530,19 +576,25 @@ export default function Sidebar() {
 
         {/* Bottom Actions */}
         <Box sx={{ mt: 'auto', pt: 2 }}>
-          <Divider />
-          <List dense>
+          <Divider sx={{ mx: 2 }} />
+          <List dense sx={{ px: 1, py: 1 }}>
             <ListItem disablePadding>
               <ListItemButton
                 component={Link}
                 href="/settings"
                 selected={pathname === '/settings'}
-                sx={{ borderRadius: 2, mx: 1 }}
+                sx={{ borderRadius: 3, py: 1.25 }}
               >
-                <ListItemIcon sx={{ minWidth: 36 }}>
-                  <SettingsIcon size={20} />
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <SettingsIcon className="h-5 w-5" />
                 </ListItemIcon>
-                <ListItemText primary="Settings" />
+                <ListItemText 
+                  primary="Settings" 
+                  primaryTypographyProps={{ 
+                    fontWeight: 600,
+                    fontSize: '0.95rem'
+                  }} 
+                />
               </ListItemButton>
             </ListItem>
           </List>

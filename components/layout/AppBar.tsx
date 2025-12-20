@@ -20,20 +20,20 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
-  Plus as AddIcon,
-  Bell as NotificationsIcon,
-  Settings as SettingsIcon,
-  Moon as DarkModeIcon,
-  Sun as LightModeIcon,
-  LogOut as LogoutIcon,
-  User as PersonIcon,
-  CircleHelp as HelpIcon,
-  Keyboard as KeyboardIcon,
-  Grid as AppsIcon,
-  Wand2 as AutoAwesomeIcon,
-} from 'lucide-react';
+  Bars3Icon as MenuIcon,
+  MagnifyingGlassIcon as SearchIcon,
+  PlusIcon as AddIcon,
+  BellIcon as NotificationsIcon,
+  Cog6ToothIcon as SettingsIcon,
+  MoonIcon as DarkModeIcon,
+  SunIcon as LightModeIcon,
+  ArrowRightOnRectangleIcon as LogoutIcon,
+  UserIcon as PersonIcon,
+  QuestionMarkCircleIcon as HelpIcon,
+  CommandLineIcon as KeyboardIcon,
+  Squares2X2Icon as AppsIcon,
+  SparklesIcon as AutoAwesomeIcon,
+} from '@heroicons/react/24/outline';
 import { useTask } from '@/context/TaskContext';
 import { useAuth } from '@/context/auth/AuthContext';
 import { useThemeMode } from '@/theme';
@@ -118,14 +118,17 @@ export default function AppBar() {
         <Box
           sx={{
             position: 'relative',
-            borderRadius: 2,
-            backgroundColor: alpha(theme.palette.text.primary, 0.05),
+            borderRadius: 3,
+            backgroundColor: alpha(theme.palette.text.primary, 0.04),
+            border: `1px solid ${theme.palette.divider}`,
             '&:hover': {
-              backgroundColor: alpha(theme.palette.text.primary, 0.08),
+              backgroundColor: alpha(theme.palette.text.primary, 0.06),
+              borderColor: alpha(theme.palette.primary.main, 0.3),
             },
             width: { xs: 0, sm: 300, md: 400 },
             maxWidth: '100%',
             display: { xs: 'none', sm: 'block' },
+            transition: 'all 0.2s ease',
           }}
         >
           <Box
@@ -139,7 +142,7 @@ export default function AppBar() {
               justifyContent: 'center',
             }}
           >
-            <SearchIcon color={theme.palette.text.secondary} />
+            <SearchIcon className="h-5 w-5" style={{ color: theme.palette.text.secondary }} />
           </Box>
           <InputBase
             placeholder="Search tasks... (Ctrl+K)"
@@ -149,9 +152,11 @@ export default function AppBar() {
               color: theme.palette.text.primary,
               width: '100%',
               '& .MuiInputBase-input': {
-                padding: theme.spacing(1.5, 1.5, 1.5, 0),
+                padding: theme.spacing(1.25, 1.5, 1.25, 0),
                 paddingLeft: `calc(1em + ${theme.spacing(4)})`,
                 width: '100%',
+                fontSize: '0.9rem',
+                fontWeight: 500,
               },
             }}
           />
@@ -160,38 +165,42 @@ export default function AppBar() {
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Actions */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {/* AI Assistant Button */}
           <Tooltip title="AI Assistant">
             <IconButton
-              color="secondary"
               onClick={() => setAiModalOpen(true)}
               sx={{
                 backgroundColor: alpha(theme.palette.secondary.main, 0.1),
                 color: theme.palette.secondary.main,
+                borderRadius: 2.5,
+                p: 1.25,
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.secondary.main, 0.2),
                 },
               }}
             >
-              <AutoAwesomeIcon />
+              <AutoAwesomeIcon className="h-5 w-5" />
             </IconButton>
           </Tooltip>
 
           {/* Add Task Button */}
           <Tooltip title="Add task (Ctrl+N)">
             <IconButton
-              color="primary"
               onClick={() => setTaskDialogOpen(true)}
               sx={{
                 backgroundColor: theme.palette.primary.main,
-                color: '#fff',
+                color: '#1a1a1a',
+                borderRadius: 2.5,
+                p: 1.25,
+                boxShadow: '0 4px 12px rgba(255, 199, 0, 0.2)',
                 '&:hover': {
                   backgroundColor: theme.palette.primary.dark,
+                  transform: 'translateY(-1px)',
                 },
               }}
             >
-              <AddIcon />
+              <AddIcon className="h-5 w-5" />
             </IconButton>
           </Tooltip>
 
@@ -199,9 +208,14 @@ export default function AppBar() {
           <Tooltip title="Whisperr Apps">
             <IconButton
               onClick={handleAppsClick}
-              sx={{ color: theme.palette.text.secondary, display: { xs: 'none', sm: 'flex' } }}
+              sx={{ 
+                color: theme.palette.text.secondary, 
+                display: { xs: 'none', sm: 'flex' },
+                borderRadius: 2.5,
+                p: 1.25,
+              }}
             >
-              <AppsIcon />
+              <AppsIcon className="h-5 w-5" />
             </IconButton>
           </Tooltip>
 
@@ -209,9 +223,13 @@ export default function AppBar() {
           <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : mode === 'light' ? 'system' : 'dark'} mode`}>
             <IconButton
               onClick={toggleMode}
-              sx={{ color: theme.palette.text.secondary }}
+              sx={{ 
+                color: theme.palette.text.secondary,
+                borderRadius: 2.5,
+                p: 1.25,
+              }}
             >
-              {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+              {mode === 'dark' ? <LightModeIcon className="h-5 w-5" /> : <DarkModeIcon className="h-5 w-5" />}
             </IconButton>
           </Tooltip>
 
@@ -219,23 +237,39 @@ export default function AppBar() {
           <Tooltip title="Notifications">
             <IconButton
               onClick={handleNotifClick}
-              sx={{ color: theme.palette.text.secondary }}
+              sx={{ 
+                color: theme.palette.text.secondary,
+                borderRadius: 2.5,
+                p: 1.25,
+              }}
             >
-              <Badge badgeContent={3} color="error">
-                <NotificationsIcon />
+              <Badge 
+                badgeContent={3} 
+                color="error"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    fontWeight: 700,
+                    fontSize: '0.65rem',
+                  }
+                }}
+              >
+                <NotificationsIcon className="h-5 w-5" />
               </Badge>
             </IconButton>
           </Tooltip>
 
           {/* Profile */}
           <Tooltip title="Account">
-            <IconButton onClick={handleProfileClick} sx={{ ml: 1 }}>
+            <IconButton onClick={handleProfileClick} sx={{ ml: 0.5 }}>
               <Avatar
                 sx={{
-                  width: 36,
-                  height: 36,
+                  width: 38,
+                  height: 38,
                   bgcolor: theme.palette.primary.main,
+                  color: '#1a1a1a',
                   fontSize: '0.9rem',
+                  fontWeight: 700,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 }}
               >
                 {getInitials(user)}
@@ -270,9 +304,9 @@ export default function AppBar() {
           <Divider />
           <MenuItem>
             <ListItemIcon>
-              <PersonIcon size={20} />
+              <PersonIcon className="h-5 w-5" />
             </ListItemIcon>
-            <ListItemText>Profile</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Profile</ListItemText>
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose();
@@ -281,28 +315,28 @@ export default function AppBar() {
             window.location.href = `https://${authSub}.${domain}/settings?source=${encodeURIComponent(window.location.origin)}`;
           }}>
             <ListItemIcon>
-              <SettingsIcon size={20} />
+              <SettingsIcon className="h-5 w-5" />
             </ListItemIcon>
-            <ListItemText>Settings</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Settings</ListItemText>
           </MenuItem>
           <MenuItem>
             <ListItemIcon>
-              <KeyboardIcon size={20} />
+              <KeyboardIcon className="h-5 w-5" />
             </ListItemIcon>
-            <ListItemText>Keyboard shortcuts</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Keyboard shortcuts</ListItemText>
           </MenuItem>
           <MenuItem>
             <ListItemIcon>
-              <HelpIcon size={20} />
+              <HelpIcon className="h-5 w-5" />
             </ListItemIcon>
-            <ListItemText>Help & Support</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Help & Support</ListItemText>
           </MenuItem>
           <Divider />
           <MenuItem sx={{ color: 'error.main' }} onClick={() => logout()}>
             <ListItemIcon>
-              <LogoutIcon size={20} color={theme.palette.error.main} />
+              <LogoutIcon className="h-5 w-5" style={{ color: theme.palette.error.main }} />
             </ListItemIcon>
-            <ListItemText>Sign out</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontWeight: 600 }}>Sign out</ListItemText>
           </MenuItem>
         </Menu>
 

@@ -39,13 +39,13 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
     background: {
       default: mode === 'light' ? '#f8f8f8' : '#0f0f0f',
-      paper: mode === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(26, 26, 26, 0.75)',
+      paper: mode === 'light' ? '#ffffff' : '#1a1a1a',
     },
     text: {
       primary: mode === 'light' ? '#0f0a08' : '#faf8f6',
       secondary: mode === 'light' ? '#6b5b4f' : '#a69080',
     },
-    divider: mode === 'light' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+    divider: mode === 'light' ? '#e8e8e8' : '#2a2a2a',
   },
   typography: {
     fontFamily: 'var(--font-inter), "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -89,12 +89,12 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
     subtitle1: {
       fontSize: '1rem',
-      fontWeight: 500,
+      fontWeight: 600,
       lineHeight: 1.5,
     },
     subtitle2: {
       fontSize: '0.875rem',
-      fontWeight: 500,
+      fontWeight: 600,
       lineHeight: 1.5,
     },
     body1: {
@@ -107,7 +107,7 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
     button: {
       textTransform: 'none',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     caption: {
       fontSize: '0.75rem',
@@ -115,13 +115,13 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     },
     overline: {
       fontSize: '0.75rem',
-      fontWeight: 600,
+      fontWeight: 700,
       letterSpacing: '0.08em',
       textTransform: 'uppercase',
     },
   },
   shape: {
-    borderRadius: 20,
+    borderRadius: 16,
   },
   shadows: [
     'none',
@@ -173,19 +173,19 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 14,
-          padding: '12px 24px',
+          borderRadius: 12,
+          padding: '10px 20px',
           fontWeight: 700,
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           textTransform: 'none',
         },
         contained: ({ theme }: { theme: any }) => ({
-          background: 'linear-gradient(135deg, #FFD700 0%, #FFC700 100%)',
+          backgroundColor: '#FFC700',
           color: '#1a1a1a',
-          boxShadow: '0 4px 15px rgba(255, 199, 0, 0.3)',
+          boxShadow: '0 4px 12px rgba(255, 199, 0, 0.2)',
           '&:hover': {
-            background: 'linear-gradient(135deg, #FFE066 0%, #FFCF40 100%)',
-            boxShadow: '0 8px 25px rgba(255, 199, 0, 0.4)',
+            backgroundColor: '#FFE066',
+            boxShadow: '0 8px 20px rgba(255, 199, 0, 0.3)',
             transform: 'translateY(-1px)',
           },
           '&:active': {
@@ -204,16 +204,16 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
       styleOverrides: {
         root: ({ theme }: { theme: any }) => ({
           borderRadius: 24,
-          backdropFilter: 'blur(16px)',
+          backdropFilter: 'blur(12px)',
           backgroundColor: theme.palette.mode === 'light'
             ? 'rgba(255, 255, 255, 0.8)'
             : 'rgba(26, 26, 26, 0.7)',
-          border: `1px solid ${theme.palette.mode === 'light'
-            ? 'rgba(0, 0, 0, 0.05)'
-            : 'rgba(255, 255, 255, 0.05)'}`,
+          border: `2px solid ${theme.palette.mode === 'light'
+            ? '#e8e8e8'
+            : '#2a2a2a'}`,
           boxShadow: theme.palette.mode === 'light'
-            ? '0 10px 30px rgba(0, 0, 0, 0.05)'
-            : '0 10px 30px rgba(0, 0, 0, 0.3)',
+            ? '0 8px 32px rgba(0, 0, 0, 0.08)'
+            : '0 8px 32px rgba(0, 0, 0, 0.4)',
         }),
       },
     },
@@ -221,13 +221,14 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
       styleOverrides: {
         root: ({ theme }: { theme: any }) => ({
           backgroundColor: theme.palette.mode === 'light'
-            ? 'rgba(248, 248, 248, 0.8)'
-            : 'rgba(15, 15, 15, 0.8)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: `1px solid ${theme.palette.mode === 'light'
-            ? 'rgba(0, 0, 0, 0.05)'
-            : 'rgba(255, 199, 0, 0.1)'}`,
+            ? 'rgba(255, 255, 255, 0.8)'
+            : 'rgba(26, 26, 26, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: `2px solid ${theme.palette.mode === 'light'
+            ? '#e8e8e8'
+            : '#2a2a2a'}`,
           boxShadow: 'none',
+          color: theme.palette.text.primary,
         }),
       },
     },
@@ -235,26 +236,47 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
       styleOverrides: {
         paper: ({ theme }: { theme: any }) => ({
           backgroundColor: theme.palette.mode === 'light'
-            ? 'rgba(255, 255, 255, 0.9)'
-            : 'rgba(18, 18, 18, 0.9)',
-          backdropFilter: 'blur(20px)',
-          border: 'none',
-          boxShadow: '20px 0 50px rgba(0, 0, 0, 0.05)',
+            ? '#ffffff'
+            : '#1a1a1a',
+          borderRight: `2px solid ${theme.palette.mode === 'light'
+            ? '#e8e8e8'
+            : '#2a2a2a'}`,
+          boxShadow: 'none',
         }),
       },
     },
     MuiListItemButton: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          margin: '4px 12px',
+          borderRadius: 16,
+          margin: '2px 12px',
+          padding: '10px 16px',
           fontWeight: 600,
+          transition: 'all 0.2s ease',
           '&.Mui-selected': {
-            backgroundColor: 'rgba(255, 199, 0, 0.1)',
-            color: '#FFC700',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 199, 0, 0.15)',
+            backgroundColor: '#FFC700',
+            color: '#ffffff',
+            boxShadow: '0 4px 12px rgba(255, 199, 0, 0.3)',
+            '& .MuiListItemIcon-root': {
+              color: '#ffffff',
             },
+            '&:hover': {
+              backgroundColor: '#FFC700',
+              opacity: 0.9,
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              right: 12,
+              width: 4,
+              height: 20,
+              backgroundColor: '#ffffff',
+              borderRadius: 2,
+            },
+          },
+          '&:hover': {
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            transform: 'translateX(4px)',
           },
         },
       },

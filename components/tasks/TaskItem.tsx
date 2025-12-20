@@ -17,17 +17,17 @@ import {
   useTheme,
 } from '@mui/material';
 import {
-  Flag as FlagIcon,
-  Clock as ScheduleIcon,
-  Pencil as EditIcon,
-  Trash2 as DeleteIcon,
-  MoreVertical as MoreIcon,
-  ListTodo as SubtaskIcon,
-  MessageSquare as CommentIcon,
-  Paperclip as AttachmentIcon,
-  Archive as ArchiveIcon,
-  Copy as CopyIcon,
-} from 'lucide-react';
+  FlagIcon,
+  ClockIcon as ScheduleIcon,
+  PencilIcon as EditIcon,
+  TrashIcon as DeleteIcon,
+  EllipsisVerticalIcon as MoreIcon,
+  ListBulletIcon as SubtaskIcon,
+  ChatBubbleLeftRightIcon as CommentIcon,
+  PaperClipIcon as AttachmentIcon,
+  ArchiveBoxIcon as ArchiveIcon,
+  DocumentDuplicateIcon as CopyIcon,
+} from '@heroicons/react/24/outline';
 import { format, isToday, isTomorrow, isPast, isThisWeek } from 'date-fns';
 import { Task, Priority } from '@/types';
 import { useTask } from '@/context/TaskContext';
@@ -209,7 +209,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
               {task.priority !== 'medium' && (
                 <Tooltip title={`${priorityLabels[task.priority]} priority`}>
                   <Chip
-                    icon={<FlagIcon size={14} />}
+                    icon={<FlagIcon className="h-3.5 w-3.5" />}
                     label={priorityLabels[task.priority]}
                     size="small"
                     sx={{
@@ -227,7 +227,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
               {/* Due Date */}
               {task.dueDate && (
                 <Chip
-                  icon={<ScheduleIcon size={14} />}
+                  icon={<ScheduleIcon className="h-3.5 w-3.5" />}
                   label={formatDueDate(new Date(task.dueDate))}
                   size="small"
                   sx={{
@@ -272,7 +272,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <SubtaskIcon size={14} />
+                    <SubtaskIcon className="h-3.5 w-3.5" />
                     <span>
                       {completedSubtasks}/{totalSubtasks}
                     </span>
@@ -292,7 +292,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <CommentIcon size={14} />
+                    <CommentIcon className="h-3.5 w-3.5" />
                     <span>{task.comments.length}</span>
                   </Box>
                 </Tooltip>
@@ -310,7 +310,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
                       fontSize: '0.75rem',
                     }}
                   >
-                    <AttachmentIcon size={14} />
+                    <AttachmentIcon className="h-3.5 w-3.5" />
                     <span>{task.attachments.length}</span>
                   </Box>
                 </Tooltip>
@@ -328,7 +328,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
           >
             <Tooltip title="More options">
               <IconButton size="small" onClick={handleMenuClick}>
-                <MoreIcon size={20} />
+                <MoreIcon className="h-5 w-5" />
               </IconButton>
             </Tooltip>
           </Box>
@@ -342,7 +342,7 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
         onClose={handleMenuClose}
         PaperProps={{
           elevation: 3,
-          sx: { minWidth: 180 },
+          sx: { minWidth: 180, borderRadius: 3 },
         }}
       >
         <MenuItem onClick={() => { 
@@ -351,27 +351,27 @@ export default function TaskItem({ task, onClick, compact = false }: TaskItemPro
           handleMenuClose(); 
         }}>
           <ListItemIcon>
-            <EditIcon size={18} />
+            <EditIcon className="h-5 w-5" />
           </ListItemIcon>
-          <ListItemText>Edit task</ListItemText>
+          <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Edit task</ListItemText>
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
-            <CopyIcon size={18} />
+            <CopyIcon className="h-5 w-5" />
           </ListItemIcon>
-          <ListItemText>Duplicate</ListItemText>
+          <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Duplicate</ListItemText>
         </MenuItem>
         <MenuItem onClick={handleArchive}>
           <ListItemIcon>
-            <ArchiveIcon size={18} />
+            <ArchiveIcon className="h-5 w-5" />
           </ListItemIcon>
-          <ListItemText>Archive</ListItemText>
+          <ListItemText primaryTypographyProps={{ fontWeight: 500 }}>Archive</ListItemText>
         </MenuItem>
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <ListItemIcon>
-            <DeleteIcon size={18} color="#ef4444" />
+            <DeleteIcon className="h-5 w-5" style={{ color: theme.palette.error.main }} />
           </ListItemIcon>
-          <ListItemText>Delete</ListItemText>
+          <ListItemText primaryTypographyProps={{ fontWeight: 600 }}>Delete</ListItemText>
         </MenuItem>
       </Menu>
     </>
