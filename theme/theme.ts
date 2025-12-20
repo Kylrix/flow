@@ -48,35 +48,41 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     divider: mode === 'light' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)',
   },
   typography: {
-    fontFamily: '"Inter", "Outfit", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: 'var(--font-inter), "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '2.5rem',
       fontWeight: 800,
       letterSpacing: '-0.02em',
       lineHeight: 1.2,
     },
     h2: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '2rem',
       fontWeight: 700,
       letterSpacing: '-0.01em',
       lineHeight: 1.3,
     },
     h3: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '1.5rem',
       fontWeight: 700,
       lineHeight: 1.4,
     },
     h4: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '1.25rem',
       fontWeight: 600,
       lineHeight: 1.4,
     },
     h5: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '1.125rem',
       fontWeight: 500,
       lineHeight: 1.5,
     },
     h6: {
+      fontFamily: 'var(--font-outfit), "Outfit", sans-serif',
       fontSize: '1rem',
       fontWeight: 500,
       lineHeight: 1.5,
