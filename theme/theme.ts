@@ -7,23 +7,20 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     mode,
     primary: {
       main: '#FFC107', // Tungsten Sun
-      contrastText: '#1B1C20',
+      contrastText: mode === 'light' ? '#1B1C20' : '#1B1C20',
     },
     secondary: {
       main: '#1A237E', // Adire Indigo
     },
-    success: {
-      main: '#004D40', // Circuit Teal
-    },
     background: {
-      default: '#1B1C20', // The Void
-      paper: '#2D2421',   // The Matter (Baked Laterite)
+      default: mode === 'light' ? '#FAF8F6' : '#1B1C20', // Solar / Void
+      paper: mode === 'light' ? '#EADDD3' : '#2D2421',   // Sand / Laterite
     },
     text: {
-      primary: '#FAF8F6', // Brownish White
-      secondary: '#A69080',
+      primary: mode === 'light' ? '#1B1C20' : '#FAF8F6',
+      secondary: mode === 'light' ? '#5E4E42' : '#A69080',
     },
-    divider: '#3D3D3D',
+    divider: mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : '#3D3D3D',
   },
   typography: {
     fontFamily: 'var(--font-inter), "Inter", sans-serif',
@@ -80,7 +77,7 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: '#1B1C20',
+          backgroundColor: mode === 'light' ? '#FAF8F6' : '#1B1C20',
           scrollbarColor: '#FFC107 transparent',
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
             width: 8,
@@ -121,18 +118,20 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: '#2D2421',
-          border: '1px solid #3D3D3D',
-          boxShadow: '8px 12px 20px rgba(26, 35, 126, 0.4)',
+          backgroundColor: mode === 'light' ? '#EADDD3' : '#2D2421',
+          border: `1px solid ${mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : '#3D3D3D'}`,
+          boxShadow: mode === 'light'
+            ? '4px 8px 16px rgba(26, 35, 126, 0.15)'
+            : '8px 12px 20px rgba(26, 35, 126, 0.4)',
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(27, 28, 32, 0.8)',
+          backgroundColor: mode === 'light' ? 'rgba(250, 248, 246, 0.8)' : 'rgba(27, 28, 32, 0.8)',
           backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid #3D3D3D',
+          borderBottom: `1px solid ${mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : '#3D3D3D'}`,
           boxShadow: 'none',
         },
       },
@@ -140,8 +139,8 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#1B1C20',
-          borderRight: '1px solid #3D3D3D',
+          backgroundColor: mode === 'light' ? '#FAF8F6' : '#1B1C20',
+          borderRight: `1px solid ${mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : '#3D3D3D'}`,
         },
       },
     },
