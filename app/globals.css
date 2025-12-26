@@ -1,4 +1,4 @@
-/* Reset and base styles for WhisperrFlow */
+/* Reset and base styles for WhisperrFlow - The Glass Monolith */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -6,37 +6,17 @@
 }
 
 :root {
-  --void: #FAF8F6;
-  --matter: #EADDD3;
-  --tungsten: #FFC107;
-  --shadow-indigo: 26, 35, 126;
+  --color-void: #000000;
+  --color-surface: #0A0A0A;
+  --color-surface-2: #141414;
+  --color-titanium: #F2F2F2;
+  --color-gunmetal: #A1A1AA;
+  --color-electric: #00F0FF;
+  --border-subtle: #222222;
+  --border-active: #404040;
 
-  --background: var(--void);
-  --foreground: #1B1C20;
-
-  /* Refined Realism: Radii */
-  --radius-micro: 12px;
-  --radius-macro: 24px;
-  --radius-mega: 32px;
-
-  /* Refined Realism: Shadows */
-  --shadow-resting: 0px 2px 4px rgba(var(--shadow-indigo), 0.2), 0px 8px 16px rgba(var(--shadow-indigo), 0.1);
-  --shadow-hover: 0px 4px 8px rgba(var(--shadow-indigo), 0.4), 0px 12px 24px rgba(var(--shadow-indigo), 0.2);
-  --shadow-floating: 0px 8px 16px rgba(var(--shadow-indigo), 0.3), 0px 24px 48px rgba(0, 0, 0, 0.2);
-
-  /* Surface Physics: Premium Highlight */
-  --shadow-ceramic: inset 0px 1px 0px rgba(255, 193, 7, 0.2);
-}
-
-.dark {
-  --void: #1B1C20;
-  --matter: #2D2421;
-  --background: var(--void);
-  --foreground: #FAF8F6;
-
-  --shadow-resting: 0px 2px 4px rgba(0, 0, 0, 0.4), 0px 8px 16px rgba(var(--shadow-indigo), 0.2);
-  --shadow-hover: 0px 4px 8px rgba(0, 0, 0, 0.6), 0px 12px 24px rgba(var(--shadow-indigo), 0.4);
-  --shadow-floating: 0px 8px 16px rgba(0, 0, 0, 0.8), 0px 24px 48px rgba(var(--shadow-indigo), 0.6);
+  --background: var(--color-void);
+  --foreground: var(--color-titanium);
 }
 
 html,
@@ -46,21 +26,22 @@ body {
   font-family: var(--font-inter), "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-void);
+  color: var(--color-titanium);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Glassmorphism 2.0 */
+.glass-panel {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -68,85 +49,32 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--shadow-indigo), 0.15);
-  border-radius: 4px;
+  background: var(--border-subtle);
+  border-radius: 12px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 193, 7, 0.15);
-}
-
-/* Focus styles */
-*:focus-visible {
-  outline: 2px solid var(--tungsten);
-  outline-offset: 2px;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
 }
 
 /* Selection styles */
 ::selection {
-  background-color: rgba(255, 193, 7, 0.3);
-}
-
-/* Smooth transitions for theme changes */
-* {
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Prevent transition on page load */
-.preload * {
-  transition: none !important;
+  background-color: rgba(0, 240, 255, 0.2);
+  color: var(--color-electric);
 }
 
 /* Animation keyframes */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.6;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Utility classes */
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* Loading skeleton shimmer */
-.skeleton {
-  background: linear-gradient(90deg,
-      rgba(0, 0, 0, 0.06) 25%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.06) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }

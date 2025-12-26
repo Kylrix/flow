@@ -35,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${mono.variable}`}>
-      <body className="font-sans antialiased">
+      <body>
         <AppProviders>
           <MainLayout>
             {children}
