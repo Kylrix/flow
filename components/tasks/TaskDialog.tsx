@@ -141,7 +141,7 @@ export default function TaskDialog() {
             Create New Task
           </Typography>
           <IconButton onClick={handleClose} size="small">
-            <CloseIcon size={20} />
+            <CloseIcon sx={{ fontSize: 20 }} />
           </IconButton>
         </DialogTitle>
 
@@ -187,7 +187,7 @@ export default function TaskDialog() {
                   value={projectId}
                   onChange={(e) => setProjectId(e.target.value)}
                   label="Project"
-                  startAdornment={<Box sx={{ mr: 1, display: 'flex' }}><FolderIcon size={20} color={theme.palette.text.secondary} /></Box>}
+                  startAdornment={<Box sx={{ mr: 1, display: 'flex' }}><FolderIcon sx={{ fontSize: 20, color: theme.palette.text.secondary }} /></Box>}
                 >
                   {projects.map((project) => (
                     <MenuItem key={project.id} value={project.id}>
@@ -214,12 +214,12 @@ export default function TaskDialog() {
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Priority)}
                   label="Priority"
-                  startAdornment={<Box sx={{ mr: 1, display: 'flex' }}><FlagIcon size={20} color={priorityOptions.find(p => p.value === priority)?.color} /></Box>}
+                  startAdornment={<Box sx={{ mr: 1, display: 'flex' }}><FlagIcon sx={{ fontSize: 20, color: priorityOptions.find(p => p.value === priority)?.color }} /></Box>}
                 >
                   {priorityOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlagIcon color={option.color} size={18} />
+                        <FlagIcon sx={{ fontSize: 18, color: option.color }} />
                         {option.label}
                       </Box>
                     </MenuItem>
@@ -293,7 +293,7 @@ export default function TaskDialog() {
                   {...props}
                   sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                 >
-                  <LabelIcon color={option.color} size={18} />
+                  <LabelIcon sx={{ fontSize: 18, color: option.color }} />
                   {option.name}
                 </Box>
               )}
