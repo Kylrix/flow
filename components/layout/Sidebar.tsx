@@ -22,25 +22,24 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  HomeIcon as DashboardIcon,
-  ListBulletIcon as TasksIcon,
-  CalendarIcon,
-  CalendarDaysIcon as EventIcon,
-  FlagIcon as FocusIcon,
-  InboxIcon,
-  CalendarDaysIcon as TodayIcon,
-  ClockIcon as ScheduleIcon,
-  CheckCircleIcon as CompletedIcon,
-  TagIcon as LabelIcon,
-  PlusIcon as AddIcon,
-  ChevronUpIcon as ExpandLess,
-  ChevronDownIcon as ExpandMore,
-  StarIcon,
-  ViewColumnsIcon as KanbanIcon,
-  TableCellsIcon as MatrixIcon,
-  ChartBarIcon as TimelineIcon,
-  Cog6ToothIcon as SettingsIcon,
-} from '@heroicons/react/24/outline';
+  Dashboard as DashboardIcon,
+  ListAlt as TasksIcon,
+  CalendarMonth as CalendarIcon,
+  CalendarToday as EventIcon,
+  Flag as FocusIcon,
+  Inbox as InboxIcon,
+  AccessTime as ScheduleIcon,
+  CheckCircle as CompletedIcon,
+  LocalOffer as LabelIcon,
+  Add as AddIcon,
+  ExpandLess,
+  ExpandMore,
+  Star as StarIcon,
+  ViewColumn as KanbanIcon,
+  GridOn as MatrixIcon,
+  BarChart as TimelineIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
 
 const DRAWER_WIDTH = 256;
@@ -115,7 +114,7 @@ export default function Sidebar() {
 
   const smartLists: NavItem[] = [
     { id: 'inbox', label: 'Inbox', icon: <InboxIcon />, badge: inboxCount },
-    { id: 'today', label: 'Today', icon: <TodayIcon />, badge: todayCount, color: '#10b981' },
+    { id: 'today', label: 'Today', icon: <EventIcon />, badge: todayCount, color: '#10b981' },
     { id: 'upcoming', label: 'Upcoming', icon: <ScheduleIcon />, badge: upcomingCount, color: '#3b82f6' },
     {
       id: 'overdue',
@@ -260,7 +259,7 @@ export default function Sidebar() {
                     color: pathname === item.href ? '#00F0FF' : '#A1A1AA',
                   }}
                 >
-                  {React.cloneElement(item.icon as React.ReactElement, { className: 'h-5 w-5' } as any)}
+                  {React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: 20 } } as any)}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
@@ -312,7 +311,7 @@ export default function Sidebar() {
                     color: item.color || '#A1A1AA',
                   }}
                 >
-                  {React.cloneElement(item.icon as React.ReactElement, { className: 'h-4 w-4' } as any)}
+                  {React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: 18 } } as any)}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
@@ -360,7 +359,7 @@ export default function Sidebar() {
             PROJECTS
           </Typography>
           <IconButton size="small" onClick={() => setProjectsOpen(!projectsOpen)} sx={{ color: 'text.disabled' }}>
-            {projectsOpen ? <ExpandLess className="h-4 w-4" /> : <ExpandMore className="h-4 w-4" />}
+            {projectsOpen ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />}
           </IconButton>
         </Box>
 

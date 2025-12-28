@@ -20,20 +20,20 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  Bars3Icon as MenuIcon,
-  MagnifyingGlassIcon as SearchIcon,
-  PlusIcon as AddIcon,
-  BellIcon as NotificationsIcon,
-  Cog6ToothIcon as SettingsIcon,
-  MoonIcon as DarkModeIcon,
-  SunIcon as LightModeIcon,
-  ArrowRightOnRectangleIcon as LogoutIcon,
-  UserIcon as PersonIcon,
-  QuestionMarkCircleIcon as HelpIcon,
-  CommandLineIcon as KeyboardIcon,
-  Squares2X2Icon as AppsIcon,
-  SparklesIcon as AutoAwesomeIcon,
-} from '@heroicons/react/24/outline';
+  Menu as MenuIcon,
+  Search as SearchIcon,
+  Add as AddIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon,
+  Logout as LogoutIcon,
+  Person as PersonIcon,
+  HelpOutline as HelpIcon,
+  Terminal as KeyboardIcon,
+  Apps as AppsIcon,
+  AutoAwesome as AutoAwesomeIcon,
+} from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
 import { useAuth } from '@/context/auth/AuthContext';
 import { useThemeMode } from '@/theme';
@@ -106,7 +106,7 @@ export default function AppBar() {
             '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' }
           }}
         >
-          <MenuIcon className="h-5 w-5" />
+          <MenuIcon sx={{ fontSize: 20 }} />
         </IconButton>
 
         {/* Logo */}
@@ -145,7 +145,7 @@ export default function AppBar() {
               justifyContent: 'center',
             }}
           >
-            <SearchIcon className="h-5 w-5" style={{ color: '#A1A1AA' }} />
+            <SearchIcon sx={{ fontSize: 20, color: '#A1A1AA' }} />
           </Box>
           <InputBase
             placeholder="Search tasks... (Ctrl+K)"
@@ -186,7 +186,7 @@ export default function AppBar() {
                 },
               }}
             >
-              <AutoAwesomeIcon className="h-5 w-5" />
+              <AutoAwesomeIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Tooltip>
 
@@ -208,7 +208,7 @@ export default function AppBar() {
                 },
               }}
             >
-              <AddIcon className="h-5 w-5" />
+              <AddIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Tooltip>
 
@@ -227,7 +227,7 @@ export default function AppBar() {
                 }
               }}
             >
-              <AppsIcon className="h-5 w-5" />
+              <AppsIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Tooltip>
 
@@ -258,7 +258,7 @@ export default function AppBar() {
                   }
                 }}
               >
-                <NotificationsIcon className="h-5 w-5" />
+                <NotificationsIcon sx={{ fontSize: 20 }} />
               </Badge>
             </IconButton>
           </Tooltip>
