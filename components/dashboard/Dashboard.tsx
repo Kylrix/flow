@@ -15,14 +15,14 @@ import {
 import {
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon,
-  CheckCircle2 as CheckIcon,
-  Clock as ScheduleIcon,
-  AlertTriangle as WarningIcon,
+  CheckCircle as CheckIcon,
+  AccessTime as ScheduleIcon,
+  Warning as WarningIcon,
   Flag as FlagIcon,
-  ArrowRight as ArrowIcon,
+  ArrowForward as ArrowIcon,
   Lightbulb as TipIcon,
-  Flame as StreakIcon,
-} from 'lucide-react';
+  Whatshot as StreakIcon,
+} from '@mui/icons-material';
 import { useTask } from '@/context/TaskContext';
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
 import TaskItem from '@/components/tasks/TaskItem';
@@ -222,7 +222,7 @@ export default function Dashboard() {
             title="Due Today"
             value={todayTasks.length}
             subtitle={`${tomorrowTasks.length} due tomorrow`}
-            icon={<ScheduleIcon size={20} />}
+            icon={<ScheduleIcon sx={{ fontSize: 20 }} />}
             color="#00F0FF"
             onClick={() => handleViewTasks('today')}
           />
@@ -232,7 +232,7 @@ export default function Dashboard() {
             title="Overdue"
             value={overdueTasks.length}
             subtitle="Need attention"
-            icon={<WarningIcon size={20} />}
+            icon={<WarningIcon sx={{ fontSize: 20 }} />}
             color="#ef4444"
             onClick={() => handleViewTasks('overdue')}
           />
@@ -242,7 +242,7 @@ export default function Dashboard() {
             title="In Progress"
             value={inProgressTasks.length}
             subtitle={`${urgentTasks.length} urgent`}
-            icon={<FlagIcon size={20} />}
+            icon={<FlagIcon sx={{ fontSize: 20 }} />}
             color="#f59e0b"
             onClick={() => handleViewTasks('in-progress')}
           />
@@ -252,7 +252,7 @@ export default function Dashboard() {
             title="Completed"
             value={completedTasks.length}
             subtitle={`${completionRate}% completion rate`}
-            icon={<CheckIcon size={20} />}
+            icon={<CheckIcon sx={{ fontSize: 20 }} />}
             color="#10b981"
           />
         </Grid>
@@ -275,7 +275,7 @@ export default function Dashboard() {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <FlagIcon size={20} color="#ef4444" />
+                  <FlagIcon sx={{ fontSize: 20, color: '#ef4444' }} />
                   <Typography variant="h3" sx={{ fontSize: '18px' }}>
                     Priority Tasks
                   </Typography>
@@ -293,7 +293,7 @@ export default function Dashboard() {
                 </Box>
                 <Button
                   size="small"
-                  endIcon={<ArrowIcon size={14} />}
+                  endIcon={<ArrowIcon sx={{ fontSize: 14 }} />}
                   onClick={() => handleViewTasks('urgent')}
                   sx={{ color: '#A1A1AA' }}
                 >
@@ -320,7 +320,7 @@ export default function Dashboard() {
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <ScheduleIcon size={20} color="#00F0FF" />
+                <ScheduleIcon sx={{ fontSize: 20, color: '#00F0FF' }} />
                 <Typography variant="h3" sx={{ fontSize: '18px' }}>
                   Today&apos;s Tasks
                 </Typography>
@@ -338,7 +338,7 @@ export default function Dashboard() {
               </Box>
               <Button
                 size="small"
-                endIcon={<ArrowIcon size={14} />}
+                endIcon={<ArrowIcon sx={{ fontSize: 14 }} />}
                 onClick={() => handleViewTasks('today')}
                 sx={{ color: '#A1A1AA' }}
               >
@@ -353,7 +353,7 @@ export default function Dashboard() {
               </Box>
             ) : (
               <Box sx={{ textAlign: 'center', py: 6, color: '#404040', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <CheckIcon size={48} style={{ marginBottom: 16, opacity: 0.2 }} />
+                <CheckIcon sx={{ fontSize: 48, marginBottom: 2, opacity: 0.2 }} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>No tasks due today!</Typography>
                 <Button
                   variant="contained"
@@ -419,7 +419,7 @@ export default function Dashboard() {
                   color: '#f59e0b'
                 }}
               >
-                <StreakIcon size={20} />
+                <StreakIcon sx={{ fontSize: 20 }} />
               </Box>
               <Box>
                 <Typography variant="caption" sx={{ color: '#A1A1AA', fontWeight: 600, display: 'block' }}>
@@ -443,7 +443,7 @@ export default function Dashboard() {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-              <TipIcon size={18} color="#00F0FF" />
+              <TipIcon sx={{ fontSize: 18, color: '#00F0FF' }} />
               <Typography variant="caption" sx={{ fontWeight: 800, color: '#00F0FF', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Productivity Tip
               </Typography>

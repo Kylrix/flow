@@ -18,16 +18,16 @@ import {
 } from '@mui/material';
 import {
   Flag as FlagIcon,
-  Clock as ScheduleIcon,
-  Edit2 as EditIcon,
-  Trash2 as DeleteIcon,
-  MoreVertical as MoreIcon,
+  AccessTime as ScheduleIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  MoreVert as MoreIcon,
   List as SubtaskIcon,
-  MessageSquare as CommentIcon,
-  Paperclip as AttachmentIcon,
+  ChatBubbleOutline as CommentIcon,
+  AttachFile as AttachmentIcon,
   Archive as ArchiveIcon,
-  Copy as CopyIcon,
-} from 'lucide-react';
+  ContentCopy as CopyIcon,
+} from '@mui/icons-material';
 import { format, isToday, isTomorrow, isPast, isThisWeek } from 'date-fns';
 import { Task, Priority } from '@/types';
 import { useTask } from '@/context/TaskContext';
@@ -206,7 +206,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
               {/* Priority */}
               {task.priority !== 'medium' && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, borderRadius: 1, backgroundColor: alpha(priorityColors[task.priority], 0.1), border: `1px solid ${alpha(priorityColors[task.priority], 0.2)}` }}>
-                  <FlagIcon size={10} color={priorityColors[task.priority]} />
+                  <FlagIcon sx={{ fontSize: 10, color: priorityColors[task.priority] }} />
                   <Typography variant="caption" sx={{ color: priorityColors[task.priority], fontWeight: 700, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {priorityLabels[task.priority]}
                   </Typography>
@@ -216,7 +216,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
               {/* Due Date */}
               {task.dueDate && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, borderRadius: 1, backgroundColor: alpha(getDueDateColor(), 0.05), border: `1px solid ${alpha(getDueDateColor(), 0.1)}` }}>
-                  <ScheduleIcon size={10} color={getDueDateColor()} />
+                  <ScheduleIcon sx={{ fontSize: 10, color: getDueDateColor() }} />
                   <Typography variant="caption" sx={{ color: getDueDateColor(), fontWeight: 700, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {formatDueDate(new Date(task.dueDate))}
                   </Typography>
@@ -227,13 +227,13 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 'auto' }}>
                 {totalSubtasks > 0 && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#404040' }}>
-                    <SubtaskIcon size={12} />
+                    <SubtaskIcon sx={{ fontSize: 12 }} />
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>{completedSubtasks}/{totalSubtasks}</Typography>
                   </Box>
                 )}
                 {task.comments.length > 0 && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#404040' }}>
-                    <CommentIcon size={12} />
+                    <CommentIcon sx={{ fontSize: 12 }} />
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>{task.comments.length}</Typography>
                   </Box>
                 )}
@@ -253,7 +253,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
               '&:hover': { color: '#F2F2F2' }
             }}
           >
-            <MoreIcon size={16} />
+            <MoreIcon sx={{ fontSize: 16 }} />
           </IconButton>
         </Box>
       </Paper>
@@ -278,20 +278,20 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
           openSecondarySidebar('task', task.id);
           handleMenuClose(); 
         }}>
-          <ListItemIcon><EditIcon size={16} color="#A1A1AA" /></ListItemIcon>
+          <ListItemIcon><EditIcon sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
           <ListItemText primary="Edit Task" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon><CopyIcon size={16} color="#A1A1AA" /></ListItemIcon>
+          <ListItemIcon><CopyIcon sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
           <ListItemText primary="Duplicate" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
         </MenuItem>
         <MenuItem onClick={handleArchive}>
-          <ListItemIcon><ArchiveIcon size={16} color="#A1A1AA" /></ListItemIcon>
+          <ListItemIcon><ArchiveIcon sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
           <ListItemText primary="Archive" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
         </MenuItem>
         <Box sx={{ my: 0.5, height: '1px', backgroundColor: '#222222' }} />
         <MenuItem onClick={handleDelete} sx={{ color: '#ef4444' }}>
-          <ListItemIcon><DeleteIcon size={16} color="#ef4444" /></ListItemIcon>
+          <ListItemIcon><DeleteIcon sx={{ fontSize: 16, color: '#ef4444' }} /></ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }} />
         </MenuItem>
       </Menu>

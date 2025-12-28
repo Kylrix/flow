@@ -19,19 +19,19 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  Plus as AddIcon,
-  ArrowUpDown as SortIcon,
-  Filter as FilterIcon,
+  Add as AddIcon,
+  SwapVert as SortIcon,
+  FilterList as FilterIcon,
   List as ListIcon,
-  LayoutDashboard as BoardIcon,
-  Calendar as CalendarIcon,
-  GanttChartSquare as TimelineIcon,
-  Grid as MatrixIcon,
-  ChevronDown as ExpandMoreIcon,
-  ArrowUp as AscIcon,
-  ArrowDown as DescIcon,
-  CheckCircle2 as CheckIcon,
-} from 'lucide-react';
+  Dashboard as BoardIcon,
+  CalendarMonth as CalendarIcon,
+  Timeline as TimelineIcon,
+  GridOn as MatrixIcon,
+  ExpandMore as ExpandMoreIcon,
+  ArrowUpward as AscIcon,
+  ArrowDownward as DescIcon,
+  CheckCircle as CheckIcon,
+} from '@mui/icons-material';
 import TaskItem from '@/components/tasks/TaskItem';
 import { useTask } from '@/context/TaskContext';
 import { ViewMode, SortField, TaskStatus } from '@/types';
