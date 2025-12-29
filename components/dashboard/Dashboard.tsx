@@ -217,7 +217,7 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Due Today"
             value={todayTasks.length}
@@ -227,7 +227,7 @@ export default function Dashboard() {
             onClick={() => handleViewTasks('today')}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Overdue"
             value={overdueTasks.length}
@@ -237,7 +237,7 @@ export default function Dashboard() {
             onClick={() => handleViewTasks('overdue')}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="In Progress"
             value={inProgressTasks.length}
@@ -247,7 +247,7 @@ export default function Dashboard() {
             onClick={() => handleViewTasks('in-progress')}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Completed"
             value={completedTasks.length}
@@ -261,7 +261,7 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <Grid container spacing={3}>
         {/* Left Column */}
-        <Grid item xs={12} lg={8}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           {/* Priority Tasks */}
           {(urgentTasks.length > 0 || highPriorityTasks.length > 0) && (
             <Paper
@@ -369,7 +369,7 @@ export default function Dashboard() {
         </Grid>
 
         {/* Right Column */}
-        <Grid item xs={12} lg={4}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           {/* Progress Overview */}
           <Paper
             sx={{
