@@ -26,6 +26,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_URL = `https://${APPWRITE_CONFIG.AUTH.SUBDOMAIN}.${APPWRITE_CONFIG.AUTH.DOMAIN}/login`;
 
+const isMobile = () => {
+  if (typeof window === 'undefined') return false;
+  return /Mobi|Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+};
+
+
 // Routes that don't require authentication (public routes)
 // These are pages that can be viewed without logging in
 const PUBLIC_ROUTES: (string | RegExp)[] = [
@@ -147,6 +153,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkSession();
   }, [checkSession]);
 
+  // Listen for postMessage from IDM window
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const expectedOrigin = `https://${APPWRITE_CONFIG.AUTH.SUBDOMAIN}.${APPWRITE_CONFIG.AUTH.DOMAIN}`;
+      if (event.origin !== expectedOrigin) return;
+
+      if (event.data?.type === 'idm:auth-success') {
+        console.log('Received auth success via postMessage in whisperrflow');
+        checkSession();
+        setIsAuthenticating(false);
+        if (authWindow && !authWindow.closed) {
+          authWindow.close();
+          setAuthWindow(null);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [checkSession, authWindow]);
+
+
   // Update overlay visibility when route changes
   useEffect(() => {
     if (!user && !isLoading) {
@@ -215,24 +243,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Still no session
     }
 
-    // Open the auth app in a popup
+    // Open the auth app
     const width = 500;
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
+
+    const sourceUrl = window.location.href;
+    const mobileUrl = new URL(AUTH_URL);
+    mobileUrl.searchParams.set('source', sourceUrl);
+
+    if (isMobile()) {
+      window.location.assign(mobileUrl.toString());
+      return;
+    }
 
     const win = window.open(
       AUTH_URL,
       'WhisperrAuth',
       `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
     );
-    
+
     if (win) {
       setAuthWindow(win);
     } else {
-      setIsAuthenticating(false);
+      // Popup blocked - fallback to redirect
+      console.warn('Popup blocked, falling back to redirect in whisperrflow');
+      window.location.assign(mobileUrl.toString());
     }
   }, [authWindow, isAuthenticating, attemptSilentAuth]);
+
 
   const logout = async () => {
     try {
