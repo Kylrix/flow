@@ -42,6 +42,7 @@ import { ECOSYSTEM_APPS } from '@/lib/constants';
 import dynamic from 'next/dynamic';
 
 const AICommandModal = dynamic(() => import('@/components/ai/AICommandModal'), { ssr: false });
+const EcosystemPortal = dynamic(() => import('@/components/common/EcosystemPortal'), { ssr: false });
 
 function getInitials(user: { name?: string | null; email?: string | null } | null) {
   const text = user?.name?.trim() || user?.email?.split('@')[0] || '';
@@ -74,6 +75,20 @@ export default function AppBar() {
   const handleNotifClick = (event: React.MouseEvent<HTMLElement>) => {
     setNotifAnchorEl(event.currentTarget);
   };
+
+  const [portalOpen, setPortalOpen] = useState(false);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl + Space to open portal
+      if ((e.ctrlKey || e.metaKey) && e.code === 'Space') {
+        e.preventDefault();
+        setPortalOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -213,17 +228,26 @@ export default function AppBar() {
           </Tooltip>
 
           {/* Ecosystem Apps - hidden on mobile */}
-          <Tooltip title="Whisperr Apps">
+          <Tooltip title="Whisperr Portal (Ctrl+Space)">
             <IconButton
-              onClick={handleAppsClick}
+              onClick={() => setPortalOpen(true)}
               sx={{
-                color: '#A1A1AA',
+                color: '#00F0FF',
                 display: { xs: 'none', sm: 'flex' },
                 borderRadius: '12px',
                 p: 1.25,
+                bgcolor: 'rgba(0, 240, 255, 0.05)',
+                border: '1px solid rgba(0, 240, 255, 0.1)',
+                animation: 'pulse 3s infinite ease-in-out',
+                '@keyframes pulse': {
+                  '0%': { boxShadow: '0 0 0 0 rgba(0, 240, 255, 0.4)' },
+                  '70%': { boxShadow: '0 0 0 10px rgba(0, 240, 255, 0)' },
+                  '100%': { boxShadow: '0 0 0 0 rgba(0, 240, 255, 0)' },
+                },
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  color: '#F2F2F2',
+                  backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                  borderColor: '#00F0FF',
+                  color: '#00F0FF',
                 }
               }}
             >
@@ -294,8 +318,8 @@ export default function AppBar() {
           onClick={handleClose}
           PaperProps={{
             elevation: 0,
-            sx: { 
-              width: 240, 
+            sx: {
+              width: 240,
               mt: 1.5,
               borderRadius: '16px',
               bgcolor: 'rgba(10, 10, 10, 0.95)',
@@ -324,7 +348,7 @@ export default function AppBar() {
             </ListItemIcon>
             <ListItemText primaryTypographyProps={{ fontWeight: 600 }}>Profile</ListItemText>
           </MenuItem>
-          <MenuItem 
+          <MenuItem
             sx={{ py: 1.2, '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' } }}
             onClick={() => {
               handleClose();
@@ -338,7 +362,7 @@ export default function AppBar() {
             </ListItemIcon>
             <ListItemText primaryTypographyProps={{ fontWeight: 600 }}>Vault Settings</ListItemText>
           </MenuItem>
-          <MenuItem 
+          <MenuItem
             sx={{ py: 1.2, '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' } }}
             onClick={() => {
               alert('Exporting your data...');
@@ -367,9 +391,9 @@ export default function AppBar() {
           onClick={handleClose}
           PaperProps={{
             elevation: 0,
-            sx: { 
-              width: 320, 
-              mt: 1.5, 
+            sx: {
+              width: 320,
+              mt: 1.5,
               p: 1,
               borderRadius: '20px',
               bgcolor: 'rgba(10, 10, 10, 0.95)',
@@ -454,8 +478,8 @@ export default function AppBar() {
           onClose={handleClose}
           PaperProps={{
             elevation: 0,
-            sx: { 
-              width: 360, 
+            sx: {
+              width: 360,
               mt: 1.5,
               borderRadius: '20px',
               bgcolor: 'rgba(10, 10, 10, 0.95)',
@@ -540,6 +564,7 @@ export default function AppBar() {
         </Menu>
       </Toolbar>
       <AICommandModal open={aiModalOpen} onClose={() => setAiModalOpen(false)} />
+      <EcosystemPortal open={portalOpen} onClose={() => setPortalOpen(false)} />
     </MuiAppBar>
   );
 }
