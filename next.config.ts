@@ -2,14 +2,7 @@ import type { NextConfig } from "next";
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const config: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  serverExternalPackages: ['pino', 'thread-stream'],
-  compress: true,
+  serverExternalPackages: ['pino', 'thread-stream', '@walletconnect/logger'],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -26,8 +19,6 @@ const config: NextConfig = {
       '@mui/material',
       '@mui/icons-material',
       'date-fns',
-      'framer-motion',
-      'lodash-es',
     ],
   },
   images: {

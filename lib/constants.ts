@@ -4,13 +4,13 @@ export const APP_CONFIG = {
   name: 'WhisperrFlow',
   tagline: 'Smart Task Navigation',
   description: 'The future of task orchestration inside the Whisperr ecosystem.',
-
+  
   // Brand assets
   logo: {
     url: 'https://res.cloudinary.com/dr266qqeo/image/upload/v1764592030/whisperrflow2_mzoiz5.jpg',
     alt: 'WhisperrFlow Logo',
   },
-
+  
   // Brand colors (for reference, actual theme colors are in theme/theme.ts)
   colors: {
     primary: '#00F0FF', // Cybernetic Teal
@@ -29,48 +29,63 @@ interface EcosystemApp {
   active?: boolean;
 }
 
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || 'whisperrnote.space';
-
+// Whisperr ecosystem apps
 export const ECOSYSTEM_APPS: EcosystemApp[] = [
-  {
-    name: 'Note',
+  { 
+    name: 'WhisperrNote', 
     shortName: 'Note',
-    icon: '📝',
-    color: '#6366F1',
-    description: 'Secure workspace & thinking',
-    url: `https://app.${DOMAIN}`,
+    icon: '📝', 
+    color: '#6366f1', 
+    description: 'Smart notes',
+    url: '/note',
   },
-  {
-    name: 'Keep',
-    shortName: 'Keep',
-    icon: '🔐',
-    color: '#8B5CF6',
-    description: 'Privacy-first vault',
-    url: `https://keep.${DOMAIN}`,
-  },
-  {
-    name: 'Flow',
+  { 
+    name: 'WhisperrFlow', 
     shortName: 'Flow',
-    icon: '🚀',
-    color: '#00F0FF',
-    description: 'Smart task navigation',
+    icon: '✅', 
+    color: '#10b981', 
+    description: 'Flow-based task navigation', 
     active: true,
-    url: `https://flow.${DOMAIN}`,
+    url: '/flow',
   },
-  {
-    name: 'Connect',
-    shortName: 'Connect',
-    icon: '💬',
-    color: '#EC4899',
-    description: 'Secure bridge & chat',
-    url: `https://connect.${DOMAIN}`,
+  { 
+    name: 'WhisperrMeet', 
+    shortName: 'Meet',
+    icon: '🎥', 
+    color: '#ec4899', 
+    description: 'Video meetings',
+    url: '/meet',
   },
-  {
-    name: 'Identity',
-    shortName: 'ID',
-    icon: '🛡️',
-    color: '#00F0FF',
-    description: 'SSO & Identity management',
-    url: `https://accounts.${DOMAIN}`,
+  { 
+    name: 'WhisperrEvents', 
+    shortName: 'Events',
+    icon: '🎉', 
+    color: '#f59e0b', 
+    description: 'Event planning',
+    url: '/events',
+  },
+  { 
+    name: 'WhisperrCal', 
+    shortName: 'Cal',
+    icon: '📅', 
+    color: '#3b82f6', 
+    description: 'Calendar',
+    url: '/cal',
+  },
+  { 
+    name: 'WhisperrPass', 
+    shortName: 'Pass',
+    icon: '🔐', 
+    color: '#8b5cf6', 
+    description: 'Password manager',
+    url: '/pass',
+  },
+  { 
+    name: 'WhisperrAuth', 
+    shortName: 'Auth',
+    icon: '🛡️', 
+    color: '#ef4444', 
+    description: 'Authentication',
+    url: '/auth',
   },
 ];
