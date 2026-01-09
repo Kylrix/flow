@@ -38,7 +38,6 @@ import {
   Check as CheckIcon,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/auth/AuthContext';
-import { useThemeMode } from '@/theme';
 import dynamic from 'next/dynamic';
 import { useSettings } from '@/hooks/useSettings';
 
@@ -78,7 +77,7 @@ const shortcuts = [
 
 export default function SettingsPanel() {
   const theme = useTheme();
-  const { mode, setMode } = useThemeMode();
+  
   const { user } = useAuth();
   const { userSettings, updateSettings } = useSettings();
   const [tabValue, setTabValue] = useState(0);
@@ -165,56 +164,7 @@ export default function SettingsPanel() {
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Appearance
               </Typography>
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Theme
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  {(['light', 'dark', 'system'] as const).map((themeMode) => (
-                    <Paper
-                      key={themeMode}
-                      onClick={() => setMode(themeMode)}
-                      sx={{
-                        p: 2,
-                        cursor: 'pointer',
-                        borderRadius: 2,
-                        border: `2px solid ${
-                          mode === themeMode
-                            ? theme.palette.primary.main
-                            : theme.palette.divider
-                        }`,
-                        minWidth: 100,
-                        textAlign: 'center',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 48,
-                          height: 32,
-                          borderRadius: 1,
-                          mx: 'auto',
-                          mb: 1,
-                          backgroundColor:
-                            themeMode === 'light'
-                              ? '#f8fafc'
-                              : themeMode === 'dark'
-                              ? '#0f172a'
-                              : 'linear-gradient(135deg, #f8fafc 50%, #0f172a 50%)',
-                          border: `1px solid ${theme.palette.divider}`,
-                        }}
-                      />
-                      <Typography
-                        variant="body2"
-                        fontWeight={mode === themeMode ? 600 : 400}
-                      >
-                        {themeMode.charAt(0).toUpperCase() + themeMode.slice(1)}
-                      </Typography>
-                    </Paper>
-                  ))}
-                </Box>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
+              
 
               <Typography variant="subtitle2" gutterBottom>
                 Display Options
