@@ -21,20 +21,15 @@ interface OriginProviderProps {
 
 export function OriginProvider({ children }: OriginProviderProps) {
   const clientId = process.env.NEXT_PUBLIC_ORIGIN_CLIENT_ID || 'demo-client-id';
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Delay loading the heavy Origin SDK
-    // This allows the main app (LCP) to render instantly.
-    const timer = setTimeout(() => {
-        setShouldLoad(true);
-    }, 3000); // Wait 3s to ensure main thread is clear
-    return () => clearTimeout(timer);
+    setIsClient(true);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {shouldLoad ? (
+      {isClient ? (
          <CampProvider clientId={clientId}>
             {children}
          </CampProvider>

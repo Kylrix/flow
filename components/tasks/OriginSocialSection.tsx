@@ -10,16 +10,21 @@ interface OriginSocialSectionProps {
 
 export default function OriginSocialSection({ taskTitle }: OriginSocialSectionProps) {
   const theme = useTheme();
-  const { isAuthenticated, socialContext, fetchSocialContext } = useOriginSocial();
+  
+  // Safely access origin social - hooks must be called at top level
+  // If the provider isn't ready, this might still throw if not careful
+  // But with isClient check in OriginProvider it should be fine.
+  const origin = useOriginSocial();
+  const { isAuthenticated, socialContext, fetchSocialContext } = origin || {};
   
   useEffect(() => {
-    if (isAuthenticated && taskTitle) {
+    if (isAuthenticated && taskTitle && fetchSocialContext) {
       const match = taskTitle.match(/@(\w+)/);
       if (match) {
         fetchSocialContext(match[1]);
       }
     }
-  }, [isAuthenticated, taskTitle]);
+  }, [isAuthenticated, taskTitle, fetchSocialContext]);
 
   if (!socialContext) return null;
 
