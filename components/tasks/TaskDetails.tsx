@@ -52,16 +52,16 @@ const OriginSocialSection = dynamic(() => import('./OriginSocialSection'), {
 });
 
 const priorityColors: Record<Priority, string> = {
-  low: '#94a3b8',
-  medium: '#3b82f6',
-  high: '#f59e0b',
-  urgent: '#ef4444',
+  low: '#A1A1AA',
+  medium: '#00F5FF',
+  high: '#F59E0B',
+  urgent: '#EF4444',
 };
 
 const statusLabels: Record<TaskStatus, string> = {
   todo: 'To Do',
   'in-progress': 'In Progress',
-  done: 'Done',
+  done: 'Completed',
   blocked: 'Blocked',
   cancelled: 'Cancelled',
 };
@@ -123,12 +123,11 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
     }
   };
 
-  // Origin Social Context moved to OriginSocialSection component
-  
   if (!task) {
     return (
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography color="text.secondary">Task not found</Typography>
+        <Box sx={{ p: 6, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+            <Typography variant="h6" color="text.secondary">Task details unavailable</Typography>
+            <Button variant="outlined" size="small" onClick={closeSecondarySidebar}>Go Back</Button>
         </Box>
     );
   }
@@ -179,222 +178,231 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'transparent' }}>
       {/* Header */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          p: 2,
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          px: 3,
+          py: 2,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Checkbox
             checked={task.status === 'done'}
             onChange={() => completeTask(task.id)}
             sx={{
-              color: priorityColors[task.priority],
-              '&.Mui-checked': { color: 'success.main' },
+              p: 0,
+              color: 'rgba(255, 255, 255, 0.2)',
+              '&.Mui-checked': { color: '#00F5FF' },
+              '&:hover': { bgcolor: 'rgba(0, 245, 255, 0.05)' }
             }}
           />
           <Chip
             label={statusLabels[task.status]}
             size="small"
             onClick={(e) => setStatusAnchor(e.currentTarget)}
-            sx={{ cursor: 'pointer' }}
+            sx={{ 
+              cursor: 'pointer',
+              bgcolor: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              fontWeight: 700,
+              fontSize: '0.65rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
+            }}
           />
         </Box>
-        <Box>
-          <IconButton size="small" onClick={handleStartEdit}>
-            <EditIcon sx={{ fontSize: 20 }} />
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <IconButton size="small" onClick={handleStartEdit} sx={{ color: 'text.secondary', '&:hover': { color: '#F2F2F2' } }}>
+            <EditIcon sx={{ fontSize: 18 }} />
           </IconButton>
-          <IconButton size="small" onClick={closeSecondarySidebar}>
+          <IconButton size="small" onClick={closeSecondarySidebar} sx={{ color: 'text.secondary', '&:hover': { color: '#F2F2F2' } }}>
             <CloseIcon sx={{ fontSize: 20 }} />
           </IconButton>
         </Box>
       </Box>
 
-      {/* Content */}
-      <Box sx={{ p: 2, overflow: 'auto', flexGrow: 1 }}>
+      {/* Scrollable Content */}
+      <Box sx={{ px: 3, py: 4, overflow: 'auto', flexGrow: 1 }}>
         {/* Title & Description */}
         {isEditing ? (
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 4 }}>
             <TextField
               fullWidth
+              variant="standard"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               placeholder="Task title"
-              sx={{ mb: 1 }}
-              InputProps={{ sx: { fontWeight: 600 } }}
+              autoFocus
+              sx={{ mb: 2 }}
+              InputProps={{ 
+                sx: { 
+                    fontSize: '1.5rem', 
+                    fontWeight: 800, 
+                    fontFamily: 'var(--font-space-grotesk)',
+                    '&:before, &:after': { display: 'none' } 
+                } 
+              }}
             />
             <TextField
               fullWidth
               multiline
               rows={3}
+              variant="outlined"
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
-              placeholder="Add description..."
+              placeholder="Add more context..."
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                    bgcolor: 'rgba(255, 255, 255, 0.02)',
+                    fontSize: '0.9rem'
+                }
+              }}
             />
-            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
               <Button size="small" variant="contained" onClick={handleSaveEdit}>
-                Save
+                Save Changes
               </Button>
-              <Button size="small" onClick={() => setIsEditing(false)}>
+              <Button size="small" onClick={() => setIsEditing(false)} sx={{ color: 'text.secondary' }}>
                 Cancel
               </Button>
             </Box>
           </Box>
         ) : (
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Typography
-              variant="h6"
-              fontWeight={600}
+              variant="h4"
               sx={{
+                mb: 1.5,
+                lineHeight: 1.2,
                 textDecoration: task.status === 'done' ? 'line-through' : 'none',
-                color: task.status === 'done' ? 'text.secondary' : 'text.primary',
+                color: task.status === 'done' ? 'text.disabled' : '#F2F2F2',
+                opacity: task.status === 'done' ? 0.6 : 1,
               }}
             >
               {task.title}
             </Typography>
             {task.description && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '0.95rem', lineHeight: 1.7 }}>
                 {task.description}
               </Typography>
             )}
           </Box>
         )}
 
-        {/* Meta Info */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
+        {/* Actionable Meta Grid */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 5 }}>
           {/* Project */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
-              <FolderIcon sx={{ fontSize: 18, color: theme.palette.action.active }} />
-              <Typography variant="body2" color="text.secondary">
-                Project
-              </Typography>
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Project</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: project?.color || '#00F5FF' }} />
+                 <Typography variant="body2" fontWeight={600}>{project?.name || 'Inbox'}</Typography>
             </Box>
-            <Chip
-              label={project?.name || 'Inbox'}
-              size="small"
-              sx={{
-                backgroundColor: alpha(project?.color || '#6366f1', 0.15),
-                color: project?.color || '#6366f1',
-              }}
-            />
           </Box>
 
           {/* Priority */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
-              <FlagIcon sx={{ fontSize: 18, color: theme.palette.action.active }} />
-              <Typography variant="body2" color="text.secondary">
-                Priority
-              </Typography>
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Priority</Typography>
+            <Box 
+                onClick={(e) => setPriorityAnchor(e.currentTarget)}
+                sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    cursor: 'pointer',
+                    '&:hover': { opacity: 0.8 }
+                }}
+            >
+                 <FlagIcon sx={{ fontSize: 16, color: priorityColors[task.priority] }} />
+                 <Typography variant="body2" fontWeight={600} sx={{ color: priorityColors[task.priority] }}>
+                    {task.priority.toUpperCase()}
+                 </Typography>
             </Box>
-            <Chip
-              icon={<FlagIcon sx={{ fontSize: 16, color: priorityColors[task.priority] }} />}
-              label={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-              size="small"
-              onClick={(e) => setPriorityAnchor(e.currentTarget)}
-              sx={{
-                cursor: 'pointer',
-                backgroundColor: alpha(priorityColors[task.priority], 0.15),
-                color: priorityColors[task.priority],
-              }}
-            />
           </Box>
 
           {/* Due Date */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
-              <CalendarIcon sx={{ fontSize: 18, color: theme.palette.action.active }} />
-              <Typography variant="body2" color="text.secondary">
-                Due date
-              </Typography>
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Timeline</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                 <CalendarIcon sx={{ fontSize: 16 }} />
+                 <Typography variant="body2" fontWeight={500}>
+                    {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : 'Indefinite'}
+                 </Typography>
             </Box>
-            <Typography variant="body2">
-              {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : 'No due date'}
-            </Typography>
           </Box>
 
           {/* Labels */}
           {taskLabels.length > 0 && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
-                <LabelIcon sx={{ fontSize: 18, color: theme.palette.action.active }} />
-                <Typography variant="body2" color="text.secondary">
-                  Labels
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                {taskLabels.map((label) => (
-                  <Chip
-                    key={label.id}
-                    label={label.name}
-                    size="small"
-                    sx={{
-                      backgroundColor: alpha(label.color, 0.15),
-                      color: label.color,
-                    }}
-                  />
-                ))}
-              </Box>
+            <Box>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>Tags</Typography>
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                    {taskLabels.map((label) => (
+                    <Chip
+                        key={label.id}
+                        label={label.name}
+                        size="small"
+                        sx={{
+                            height: 20,
+                            fontSize: '0.6rem',
+                            bgcolor: 'transparent',
+                            border: `1px solid ${alpha(label.color, 0.4)}`,
+                            color: label.color,
+                            fontWeight: 700,
+                        }}
+                    />
+                    ))}
+                </Box>
             </Box>
           )}
-
-          {/* Created */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
-              <ScheduleIcon sx={{ fontSize: 18, color: theme.palette.action.active }} />
-              <Typography variant="body2" color="text.secondary">
-                Created
-              </Typography>
-            </Box>
-            <Typography variant="body2">
-              {format(new Date(task.createdAt), 'MMM d, yyyy')}
-            </Typography>
-          </Box>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 4, opacity: 0.05 }} />
 
-        {/* Social Context (Origin) */}
+        {/* Social Context - Origin Integration */}
         <OriginSocialSection taskTitle={task.title} />
 
-        {/* Subtasks */}
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="subtitle2" fontWeight={600}>
-              Subtasks
-            </Typography>
+        {/* Subtasks Section */}
+        <Box sx={{ mb: 5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="subtitle2">Execution Track</Typography>
             {task.subtasks.length > 0 && (
-              <Typography variant="caption" color="text.secondary">
-                {completedSubtasks}/{task.subtasks.length}
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
+                {completedSubtasks} / {task.subtasks.length}
               </Typography>
             )}
           </Box>
 
           {task.subtasks.length > 0 && (
-            <LinearProgress
-              variant="determinate"
-              value={subtaskProgress}
-              sx={{ mb: 1.5, height: 4, borderRadius: 2 }}
-            />
+            <Box sx={{ width: '100%', height: 4, bgcolor: 'rgba(255, 255, 255, 0.03)', borderRadius: 2, mb: 3, overflow: 'hidden' }}>
+                <Box 
+                    sx={{ 
+                        height: '100%', 
+                        width: `${subtaskProgress}%`, 
+                        bgcolor: '#00F5FF', 
+                        boxShadow: '0 0 10px rgba(0, 245, 255, 0.4)',
+                        transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)' 
+                    }} 
+                />
+            </Box>
           )}
 
-          <List dense disablePadding>
+          <List sx={{ mb: 2 }}>
             {task.subtasks.map((subtask) => (
               <ListItem
                 key={subtask.id}
                 disablePadding
                 sx={{
-                  borderRadius: 1,
+                  borderRadius: 1.5,
                   mb: 0.5,
+                  transition: 'all 0.2s',
                   '&:hover': {
-                    backgroundColor: alpha(theme.palette.text.primary, 0.02),
+                    bgcolor: 'rgba(255, 255, 255, 0.02)',
                   },
                 }}
                 secondaryAction={
@@ -402,8 +410,9 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
                     edge="end"
                     size="small"
                     onClick={() => deleteSubtask(task.id, subtask.id)}
+                    sx={{ opacity: 0.2, '&:hover': { opacity: 1, color: 'error.main' } }}
                   >
-                    <DeleteIcon sx={{ fontSize: 20 }} />
+                    <DeleteIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 }
               >
@@ -413,180 +422,186 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
                     checked={subtask.completed}
                     onChange={() => toggleSubtask(task.id, subtask.id)}
                     size="small"
+                    sx={{
+                        p: 0,
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        '&.Mui-checked': { color: '#00F5FF' }
+                    }}
                   />
                 </ListItemIcon>
                 <ListItemText
                   primary={subtask.title}
-                  sx={{
-                    textDecoration: subtask.completed ? 'line-through' : 'none',
-                    color: subtask.completed ? 'text.secondary' : 'text.primary',
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: '0.9rem',
+                      fontWeight: 500,
+                      textDecoration: subtask.completed ? 'line-through' : 'none',
+                      color: subtask.completed ? 'text.disabled' : 'text.primary',
+                    }
                   }}
                 />
               </ListItem>
             ))}
           </List>
 
-          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, bgcolor: 'rgba(255, 255, 255, 0.02)', p: 0.5, borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.04)' }}>
             <TextField
               size="small"
               fullWidth
-              placeholder="Add subtask..."
+              placeholder="Add sub-task..."
               value={newSubtask}
+              variant="standard"
               onChange={(e) => setNewSubtask(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddSubtask()}
+              InputProps={{ 
+                disableUnderline: true,
+                sx: { px: 1.5, fontSize: '0.85rem' }
+              }}
             />
             <IconButton 
                 size="small" 
                 onClick={handleGenerateSubtasks} 
                 disabled={isGeneratingSubtasks}
-                color="primary"
-                title="Generate subtasks with AI"
+                sx={{ color: '#00F5FF' }}
             >
-                {isGeneratingSubtasks ? <CircularProgress size={20} /> : <AutoFixHighIcon sx={{ fontSize: 20 }} />}
+                {isGeneratingSubtasks ? <CircularProgress size={16} color="inherit" /> : <AutoFixHighIcon sx={{ fontSize: 18 }} />}
             </IconButton>
-            <IconButton size="small" onClick={handleAddSubtask} disabled={!newSubtask.trim()}>
-              <AddIcon sx={{ fontSize: 20 }} />
+            <IconButton size="small" onClick={handleAddSubtask} disabled={!newSubtask.trim()} sx={{ color: '#F2F2F2' }}>
+              <AddIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 4, opacity: 0.05 }} />
 
-        {/* Whisperr Ecosystem Integration */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1 }}>
-            Linked Items
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {/* Ecosystem Integration */}
+        <Box sx={{ mb: 5 }}>
+          <Typography variant="subtitle2" sx={{ mb: 2 }}>Ecosystem Links</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
             <Button
               variant="outlined"
               size="small"
-              startIcon={<NotesIcon sx={{ fontSize: 18 }} />}
-              sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+              startIcon={<NotesIcon sx={{ fontSize: 16 }} />}
+              sx={{ justifyContent: 'flex-start', border: '1px solid rgba(255, 255, 255, 0.05)', bgcolor: 'rgba(255, 255, 255, 0.01)', fontSize: '0.75rem' }}
             >
-              Link to WhisperrNote
+              Note
             </Button>
             <Button
               variant="outlined"
               size="small"
-              startIcon={<EventIcon sx={{ fontSize: 18 }} />}
-              sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+              startIcon={<MeetingIcon sx={{ fontSize: 16 }} />}
+              sx={{ justifyContent: 'flex-start', border: '1px solid rgba(255, 255, 255, 0.05)', bgcolor: 'rgba(255, 255, 255, 0.01)', fontSize: '0.75rem' }}
             >
-              Link to WhisperrEvents
+              Meet
             </Button>
             <Button
               variant="outlined"
               size="small"
-              startIcon={<MeetingIcon sx={{ fontSize: 18 }} />}
-              sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+              startIcon={<CalendarIcon sx={{ fontSize: 16 }} />}
+              sx={{ justifyContent: 'flex-start', border: '1px solid rgba(255, 255, 255, 0.05)', bgcolor: 'rgba(255, 255, 255, 0.01)', fontSize: '0.75rem' }}
             >
-              Link to WhisperrMeet
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<CalendarIcon sx={{ fontSize: 18 }} />}
-              sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
-            >
-              Add to WhisperrCal
+              Cal
             </Button>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
+        {/* Comments Section */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="subtitle2" sx={{ mb: 3 }}>Collaboration ({task.comments.length})</Typography>
 
-        {/* Comments */}
-        <Box>
-          <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1 }}>
-            Comments ({task.comments.length})
-          </Typography>
-
-          <List disablePadding>
+          <List disablePadding sx={{ mb: 3 }}>
             {task.comments.map((comment) => (
               <ListItem
                 key={comment.id}
                 alignItems="flex-start"
                 disablePadding
-                sx={{ mb: 2 }}
+                sx={{ mb: 3 }}
               >
-                <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
-                  <Avatar sx={{ width: 28, height: 28, fontSize: '0.8rem' }}>
+                <ListItemIcon sx={{ minWidth: 36, mt: 0.5 }}>
+                  <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem', fontWeight: 800, bgcolor: 'rgba(255, 255, 255, 0.1)', color: '#F2F2F2' }}>
                     {comment.authorName.charAt(0)}
                   </Avatar>
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2" fontWeight={500}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Typography variant="body2" fontWeight={800} sx={{ fontSize: '0.8rem' }}>
                         {comment.authorName}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.4 }}>
                         {format(new Date(comment.createdAt), 'MMM d, h:mm a')}
                       </Typography>
                     </Box>
                   }
                   secondary={comment.content}
+                  secondaryTypographyProps={{ sx: { color: 'text.secondary', fontSize: '0.875rem' } }}
                 />
               </ListItem>
             ))}
           </List>
 
-          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', bgcolor: 'rgba(255,255,255,0.02)', p: 1.5, borderRadius: 2, border: '1px solid rgba(255,255,255,0.05)' }}>
             <TextField
               size="small"
               fullWidth
-              placeholder="Add a comment..."
+              placeholder="Write a comment..."
+              variant="standard"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleAddComment()}
               multiline
-              maxRows={3}
+              maxRows={6}
+              InputProps={{ 
+                disableUnderline: true,
+                sx: { fontSize: '0.9rem' }
+              }}
             />
             <IconButton
               size="small"
               onClick={handleAddComment}
               disabled={!newComment.trim()}
-              color="primary"
+              sx={{ color: '#00F5FF', p: 0.5 }}
             >
-              <SendIcon sx={{ fontSize: 20 }} />
+              <SendIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
         </Box>
       </Box>
 
-      {/* Status Menu */}
+      {/* Menus */}
       <Menu
         anchorEl={statusAnchor}
         open={Boolean(statusAnchor)}
         onClose={() => setStatusAnchor(null)}
+        PaperProps={{ sx: { minWidth: 160 } }}
       >
         {Object.entries(statusLabels).map(([status, label]) => (
           <MenuItem
             key={status}
             onClick={() => handleStatusChange(status as TaskStatus)}
             selected={task.status === status}
+            sx={{ fontSize: '0.85rem' }}
           >
             {label}
           </MenuItem>
         ))}
       </Menu>
 
-      {/* Priority Menu */}
       <Menu
         anchorEl={priorityAnchor}
         open={Boolean(priorityAnchor)}
         onClose={() => setPriorityAnchor(null)}
+        PaperProps={{ sx: { minWidth: 160 } }}
       >
         {(['low', 'medium', 'high', 'urgent'] as Priority[]).map((priority) => (
           <MenuItem
             key={priority}
             onClick={() => handlePriorityChange(priority)}
             selected={task.priority === priority}
+            sx={{ fontSize: '0.85rem', gap: 1 }}
           >
-            <Box component="span" sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
-              <FlagIcon sx={{ fontSize: 18, color: priorityColors[priority] }} />
-            </Box>
-            {priority.charAt(0).toUpperCase() + priority.slice(1)}
+            <FlagIcon sx={{ fontSize: 16, color: priorityColors[priority] }} />
+            {priority.toUpperCase()}
           </MenuItem>
         ))}
       </Menu>

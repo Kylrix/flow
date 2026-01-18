@@ -139,106 +139,106 @@ export default function TaskList() {
   };
 
   return (
-    <Box>
+    <Box sx={{ animation: 'fadeIn 0.4s ease-out' }}>
       {/* Header */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          mb: 3,
+          mb: 5,
           flexWrap: 'wrap',
-          gap: 2,
+          gap: 3,
         }}
       >
         <Box>
-          <Typography variant="h4" fontWeight={700}>
+          <Typography variant="h3" sx={{ mb: 1, letterSpacing: '-0.03em' }}>
             {getViewTitle()}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#00F5FF', boxShadow: '0 0 8px #00F5FF' }} />
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                {tasks.length} {tasks.length === 1 ? 'Action Item' : 'Action Items'}
+            </Typography>
+          </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {/* View Mode Toggle */}
-          <ToggleButtonGroup
-            value={viewMode}
-            exclusive
-            onChange={(_, value) => value && setViewMode(value)}
-            size="small"
-            sx={{
-              '& .MuiToggleButton-root': {
-                border: 'none',
-                borderRadius: 1,
-                px: 1.5,
-              },
+          <Box 
+            sx={{ 
+                display: 'flex', 
+                bgcolor: 'rgba(255, 255, 255, 0.03)', 
+                p: 0.5, 
+                borderRadius: 2,
+                border: '1px solid rgba(255, 255, 255, 0.05)'
             }}
           >
-            <ToggleButton value="list">
-              <Tooltip title="List view">
-                <ListIcon sx={{ fontSize: 20 }} />
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="board">
-              <Tooltip title="Board view">
-                <BoardIcon sx={{ fontSize: 20 }} />
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="calendar">
-              <Tooltip title="Calendar view">
-                <CalendarIcon sx={{ fontSize: 20 }} />
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton value="timeline">
-              <Tooltip title="Timeline view">
-                <TimelineIcon sx={{ fontSize: 20 }} />
-              </Tooltip>
-            </ToggleButton>
-          </ToggleButtonGroup>
+            {[
+                { id: 'list', icon: ListIcon, label: 'List' },
+                { id: 'board', icon: BoardIcon, label: 'Board' },
+                { id: 'calendar', icon: CalendarIcon, label: 'Calendar' }
+            ].map((mode) => (
+                <IconButton
+                    key={mode.id}
+                    size="small"
+                    onClick={() => setViewMode(mode.id as ViewMode)}
+                    sx={{
+                        borderRadius: 1.5,
+                        px: 1.5,
+                        color: viewMode === mode.id ? '#00F5FF' : 'text.disabled',
+                        bgcolor: viewMode === mode.id ? 'rgba(0, 245, 255, 0.05)' : 'transparent',
+                        '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' }
+                    }}
+                >
+                    <mode.icon sx={{ fontSize: 20 }} />
+                </IconButton>
+            ))}
+          </Box>
 
-          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+          <Divider orientation="vertical" flexItem sx={{ mx: 1, opacity: 0.1 }} />
 
-          {/* Sort */}
-          <Button
-            variant="text"
-            size="small"
-            startIcon={<SortIcon sx={{ fontSize: 18 }} />}
-            endIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
-            onClick={handleSortClick}
-            sx={{ textTransform: 'none' }}
-          >
-            Sort
-          </Button>
-
-          {/* Filter */}
-          <Button
-            variant="text"
-            size="small"
-            startIcon={<FilterIcon sx={{ fontSize: 18 }} />}
-            endIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
-            onClick={handleFilterClick}
-            sx={{ textTransform: 'none' }}
-          >
-            Filter
-            {(filter.status?.length || filter.labels?.length) && (
-              <Chip
-                label={
-                  (filter.status?.length || 0) + (filter.labels?.length || 0)
-                }
+          {/* Sort & Filter Group */}
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
                 size="small"
-                sx={{ ml: 1, height: 18, fontSize: '0.7rem' }}
-              />
-            )}
-          </Button>
+                variant="outlined"
+                startIcon={<SortIcon />}
+                onClick={handleSortClick}
+                sx={{ borderRadius: 2 }}
+            >
+                Sort
+            </Button>
+
+            <Button
+                size="small"
+                variant="outlined"
+                startIcon={<FilterIcon />}
+                onClick={handleFilterClick}
+                sx={{ borderRadius: 2 }}
+            >
+                Filter
+                {(filter.status?.length || filter.labels?.length) && (
+                <Box sx={{ ml: 1, width: 16, height: 16, borderRadius: '50%', bgcolor: '#00F5FF', color: '#000', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900 }}>
+                    {(filter.status?.length || 0) + (filter.labels?.length || 0)}
+                </Box>
+                )}
+            </Button>
+          </Box>
 
           {/* Add Task */}
           <Button
             variant="contained"
-            startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+            color="primary"
+            startIcon={<AddIcon />}
             onClick={() => setTaskDialogOpen(true)}
+            sx={{ 
+                borderRadius: 2,
+                px: 3,
+                boxShadow: '0 8px 20px rgba(0, 245, 255, 0.2)'
+            }}
           >
-            Add Task
+            New Task
           </Button>
         </Box>
       </Box>
@@ -248,23 +248,18 @@ export default function TaskList() {
         anchorEl={sortAnchorEl}
         open={Boolean(sortAnchorEl)}
         onClose={handleSortClose}
-        PaperProps={{ sx: { minWidth: 200 } }}
+        PaperProps={{ sx: { minWidth: 200, mt: 1 } }}
       >
         {sortOptions.map((option) => (
           <MenuItem
             key={option.field}
             onClick={() => handleSortChange(option.field)}
             selected={sort.field === option.field}
+            sx={{ gap: 2 }}
           >
-            <ListItemText>{option.label}</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }}>{option.label}</ListItemText>
             {sort.field === option.field && (
-              <ListItemIcon sx={{ minWidth: 'auto', ml: 1 }}>
-                {sort.direction === 'asc' ? (
-                  <AscIcon sx={{ fontSize: 18 }} />
-                ) : (
-                  <DescIcon sx={{ fontSize: 18 }} />
-                )}
-              </ListItemIcon>
+                {sort.direction === 'asc' ? <AscIcon sx={{ fontSize: 16 }} /> : <DescIcon sx={{ fontSize: 16 }} />}
             )}
           </MenuItem>
         ))}
@@ -275,56 +270,48 @@ export default function TaskList() {
         anchorEl={filterAnchorEl}
         open={Boolean(filterAnchorEl)}
         onClose={handleFilterClose}
-        PaperProps={{ sx: { minWidth: 200, p: 1 } }}
+        PaperProps={{ sx: { minWidth: 240, mt: 1, p: 1.5 } }}
       >
-        <Typography variant="overline" sx={{ px: 1, color: 'text.secondary' }}>
-          Status
+        <Typography variant="subtitle2" sx={{ px: 1, mb: 2, scale: '0.8', originX: 0 }}>
+          STATUS FILTERS
         </Typography>
         {statusFilters.map((item) => (
           <MenuItem
             key={item.status}
             onClick={() => handleStatusFilterToggle(item.status)}
+            sx={{ borderRadius: 1.5, mb: 0.5 }}
           >
-            <ListItemIcon sx={{ minWidth: 36 }}>
-              <Box
-                sx={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: '50%',
-                  backgroundColor: item.color,
-                }}
-              />
+            <ListItemIcon sx={{ minWidth: 32 }}>
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
             </ListItemIcon>
-            <ListItemText>{item.label}</ListItemText>
+            <ListItemText primaryTypographyProps={{ fontSize: '0.85rem' }}>{item.label}</ListItemText>
             {filter.status?.includes(item.status) && (
-              <CheckIcon sx={{ fontSize: 20, color: theme.palette.primary.main }} />
+              <CheckIcon sx={{ fontSize: 18, color: '#00F5FF' }} />
             )}
           </MenuItem>
         ))}
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 1.5, opacity: 0.05 }} />
         <MenuItem
           onClick={() => setFilter({ ...filter, showCompleted: !filter.showCompleted })}
+          sx={{ borderRadius: 1.5 }}
         >
-          <ListItemText>Show completed</ListItemText>
-          {filter.showCompleted && <CheckIcon sx={{ fontSize: 20, color: theme.palette.primary.main }} />}
+          <ListItemText primaryTypographyProps={{ fontSize: '0.85rem' }}>Include Completed</ListItemText>
+          {filter.showCompleted && <CheckIcon sx={{ fontSize: 18, color: '#00F5FF' }} />}
         </MenuItem>
-        <MenuItem
-          onClick={() => setFilter({ ...filter, showArchived: !filter.showArchived })}
-        >
-          <ListItemText>Show archived</ListItemText>
-          {filter.showArchived && <CheckIcon sx={{ fontSize: 20, color: theme.palette.primary.main }} />}
-        </MenuItem>
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 1.5, opacity: 0.05 }} />
         <MenuItem
           onClick={() => {
             setFilter({ showCompleted: true, showArchived: false });
             handleFilterClose();
           }}
+          sx={{ borderRadius: 1.5, color: 'text.secondary' }}
         >
-          <ListItemText>Clear filters</ListItemText>
+          <ListItemText primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }}>Reset to Defaults</ListItemText>
         </MenuItem>
       </Menu>
 
+      {/* Grid Content */}
+      <Box sx={{ minHeight: '60vh' }}>
       {/* Task List View */}
       {viewMode === 'list' && (
         <Box>
@@ -332,24 +319,24 @@ export default function TaskList() {
             <Box
               sx={{
                 textAlign: 'center',
-                py: 8,
+                py: 12,
                 color: 'text.secondary',
               }}
             >
-              <Typography variant="h6" gutterBottom>
-                No tasks found
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 800 }}>
+                Clean Slate
               </Typography>
-              <Typography variant="body2" sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ mb: 4, opacity: 0.6 }}>
                 {filter.search
-                  ? 'Try adjusting your search or filters'
-                  : 'Create a new task to get started'}
+                  ? 'No action items matching your search.'
+                  : 'You have no pending tasks in this view.'}
               </Typography>
               <Button
                 variant="outlined"
                 startIcon={<AddIcon />}
                 onClick={() => setTaskDialogOpen(true)}
               >
-                Add Task
+                Add Your First Task
               </Button>
             </Box>
           ) : (
@@ -363,8 +350,8 @@ export default function TaskList() {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 2,
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' },
+            gap: 3,
             minHeight: 400,
           }}
         >
@@ -372,10 +359,11 @@ export default function TaskList() {
             <Box
               key={status}
               sx={{
-                backgroundColor: alpha(theme.palette.text.primary, 0.02),
-                borderRadius: 2,
-                p: 1.5,
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                borderRadius: 3,
+                p: 2,
                 minHeight: 400,
+                border: '1px solid rgba(255, 255, 255, 0.04)'
               }}
             >
               <Box
@@ -383,34 +371,30 @@ export default function TaskList() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  mb: 2,
+                  mb: 3,
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <Box
                     sx={{
-                      width: 12,
-                      height: 12,
+                      width: 8,
+                      height: 8,
                       borderRadius: '50%',
-                      backgroundColor:
+                      bgcolor:
                         statusFilters.find((s) => s.status === status)?.color ||
                         theme.palette.grey[500],
+                      boxShadow: `0 0 8px ${statusFilters.find((s) => s.status === status)?.color}`
                     }}
                   />
-                  <Typography variant="subtitle2" fontWeight={600}>
+                  <Typography variant="subtitle2" sx={{ color: '#F2F2F2' }}>
                     {statusFilters.find((s) => s.status === status)?.label}
                   </Typography>
-                  <Chip
-                    label={groupedTasks[status].length}
-                    size="small"
-                    sx={{ height: 20, fontSize: '0.7rem' }}
-                  />
                 </Box>
-                <IconButton size="small" onClick={() => setTaskDialogOpen(true)}>
-                  <AddIcon sx={{ fontSize: 20 }} />
+                <IconButton size="small" onClick={() => setTaskDialogOpen(true)} sx={{ color: 'text.disabled' }}>
+                  <AddIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Box>
-              <Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {groupedTasks[status].map((task) => (
                   <TaskItem key={task.id} task={task} compact />
                 ))}
@@ -425,46 +409,27 @@ export default function TaskList() {
         <Box
           sx={{
             textAlign: 'center',
-            py: 8,
+            py: 12,
             color: 'text.secondary',
-            backgroundColor: alpha(theme.palette.text.primary, 0.02),
-            borderRadius: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            borderRadius: 4,
+            border: '1px dashed rgba(255, 255, 255, 0.1)'
           }}
         >
-          <Box sx={{ mb: 2, opacity: 0.5 }}>
-            <CalendarIcon sx={{ fontSize: 64 }} />
+          <Box sx={{ mb: 3, opacity: 0.2 }}>
+            <CalendarIcon sx={{ fontSize: 80 }} />
           </Box>
-          <Typography variant="h6" gutterBottom>
-            Calendar View
+          <Typography variant="h5" gutterBottom sx={{ fontWeight: 800, color: '#F2F2F2' }}>
+            Time Dimension
           </Typography>
-          <Typography variant="body2">
-            Visual calendar coming soon. See your tasks organized by date.
+          <Typography variant="body2" sx={{ maxWidth: 400, mx: 'auto', opacity: 0.6 }}>
+            The visual calendar interface is currently being optimized for the Whisperr ecosystem. 
           </Typography>
         </Box>
       )}
-
-      {/* Timeline View Placeholder */}
-      {viewMode === 'timeline' && (
-        <Box
-          sx={{
-            textAlign: 'center',
-            py: 8,
-            color: 'text.secondary',
-            backgroundColor: alpha(theme.palette.text.primary, 0.02),
-            borderRadius: 2,
-          }}
-        >
-          <Box sx={{ mb: 2, opacity: 0.5 }}>
-            <TimelineIcon sx={{ fontSize: 64 }} />
-          </Box>
-          <Typography variant="h6" gutterBottom>
-            Timeline View
-          </Typography>
-          <Typography variant="body2">
-            Gantt-style timeline coming soon. Visualize task durations and dependencies.
-          </Typography>
-        </Box>
-      )}
+      </Box>
     </Box>
   );
+}
+
 }
