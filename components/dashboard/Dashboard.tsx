@@ -45,52 +45,62 @@ function StatCard({ title, value, subtitle, icon, color, trend, onClick }: StatC
     <Paper
       onClick={onClick}
       sx={{
-        p: 2.5,
-        borderRadius: 2,
+        p: 3,
+        borderRadius: 4,
         cursor: onClick ? 'pointer' : 'default',
-        backgroundColor: 'rgba(10, 10, 10, 0.7)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid rgba(255, 255, 255, 0.05)',
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': onClick
           ? {
-            borderColor: '#404040',
-            transform: 'translateY(-4px)',
-            backgroundColor: 'rgba(20, 20, 20, 0.8)',
+            borderColor: 'rgba(0, 245, 255, 0.3)',
+            transform: 'translateY(-6px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
           }
           : {},
+        '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '2px',
+            background: `linear-gradient(90deg, ${alpha(color, 0.5)}, transparent)`,
+            opacity: 0.5,
+        }
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <Box>
-          <Typography variant="caption" sx={{ color: '#A1A1AA', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', mb: 1, display: 'block' }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'block' }}>
             {title}
           </Typography>
-          <Typography variant="h4" fontWeight={800} sx={{ color: '#F2F2F2', fontFamily: 'var(--font-mono)', mb: 0.5 }}>
+          <Typography variant="h3" sx={{ color: '#F2F2F2', mb: 0.5, letterSpacing: '-0.02em' }}>
             {value}
           </Typography>
           {subtitle && (
-            <Typography variant="caption" sx={{ color: '#404040', fontWeight: 500 }}>
+            <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600 }}>
               {subtitle}
             </Typography>
           )}
         </Box>
         <Box
           sx={{
-            width: 48,
-            height: 48,
-            borderRadius: 1.5,
-            backgroundColor: alpha(color, 0.1),
+            width: 44,
+            height: 44,
+            borderRadius: 2,
+            backgroundColor: alpha(color, 0.05),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: color,
-            border: `1px solid ${alpha(color, 0.2)}`,
+            border: `1px solid ${alpha(color, 0.1)}`,
           }}
         >
-          {icon}
+          {React.cloneElement(icon as React.ReactElement, { sx: { fontSize: 22 } })}
         </Box>
       </Box>
     </Paper>
@@ -198,32 +208,35 @@ export default function Dashboard() {
   const randomTip = productivityTips[Math.floor(Math.random() * productivityTips.length)];
 
   return (
-    <Box>
+    <Box sx={{ animation: 'fadeIn 0.6s ease-out' }}>
       {/* Welcome Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h1" sx={{ mb: 1 }}>
+      <Box sx={{ mb: 6 }}>
+        <Typography variant="h1" sx={{ mb: 1.5, letterSpacing: '-0.04em' }}>
           Welcome back.
         </Typography>
-        <Typography variant="body1" sx={{ color: '#A1A1AA' }}>
-          {format(now, 'EEEE, MMMM d, yyyy')} • You have{' '}
-          <span style={{ color: '#00F0FF', fontWeight: 700 }}>{todayTasks.length} tasks</span> due today
-          {overdueTasks.length > 0 && (
-            <>
-              {' '}and <span style={{ color: '#ef4444', fontWeight: 700 }}>{overdueTasks.length} overdue</span>
-            </>
-          )}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                {format(now, 'EEEE, MMMM d, yyyy').toUpperCase()}
+            </Typography>
+            <Divider orientation="vertical" flexItem sx={{ height: 20, mx: 1, opacity: 0.2 }} />
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                You have <span style={{ color: '#00F5FF', fontWeight: 900 }}>{todayTasks.length} tasks</span> due today
+                {overdueTasks.length > 0 && (
+                    <> • <span style={{ color: '#FF4D4D', fontWeight: 900 }}>{overdueTasks.length} overdue</span></>
+                )}
+            </Typography>
+        </Box>
       </Box>
 
       {/* Stats Grid */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      <Grid container spacing={3} sx={{ mb: 6 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Due Today"
             value={todayTasks.length}
-            subtitle={`${tomorrowTasks.length} due tomorrow`}
-            icon={<ScheduleIcon sx={{ fontSize: 20 }} />}
-            color="#00F0FF"
+            subtitle={`${tomorrowTasks.length} pending tomorrow`}
+            icon={<ScheduleIcon />}
+            color="#00F5FF"
             onClick={() => handleViewTasks('today')}
           />
         </Grid>
@@ -231,9 +244,9 @@ export default function Dashboard() {
           <StatCard
             title="Overdue"
             value={overdueTasks.length}
-            subtitle="Need attention"
-            icon={<WarningIcon sx={{ fontSize: 20 }} />}
-            color="#ef4444"
+            subtitle="Immediate action required"
+            icon={<WarningIcon />}
+            color="#FF4D4D"
             onClick={() => handleViewTasks('overdue')}
           />
         </Grid>
@@ -241,9 +254,9 @@ export default function Dashboard() {
           <StatCard
             title="In Progress"
             value={inProgressTasks.length}
-            subtitle={`${urgentTasks.length} urgent`}
-            icon={<FlagIcon sx={{ fontSize: 20 }} />}
-            color="#f59e0b"
+            subtitle={`${urgentTasks.length} identified as urgent`}
+            icon={<FlagIcon />}
+            color="#FFBD2E"
             onClick={() => handleViewTasks('in-progress')}
           />
         </Grid>
@@ -251,43 +264,44 @@ export default function Dashboard() {
           <StatCard
             title="Completed"
             value={completedTasks.length}
-            subtitle={`${completionRate}% completion rate`}
-            icon={<CheckIcon sx={{ fontSize: 20 }} />}
-            color="#10b981"
+            subtitle={`${completionRate}% total efficiency`}
+            icon={<CheckIcon />}
+            color="#10B981"
           />
         </Grid>
       </Grid>
 
       {/* Main Content Grid */}
-      <Grid container spacing={3}>
+      <Grid container spacing={4}>
         {/* Left Column */}
         <Grid size={{ xs: 12, lg: 8 }}>
           {/* Priority Tasks */}
           {(urgentTasks.length > 0 || highPriorityTasks.length > 0) && (
             <Paper
               sx={{
-                p: 3,
-                mb: 3,
-                borderRadius: 3,
-                backgroundColor: 'rgba(10, 10, 10, 0.5)',
-                border: '1px solid #222222',
+                p: 4,
+                mb: 4,
+                borderRadius: 4,
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <FlagIcon sx={{ fontSize: 20, color: '#ef4444' }} />
-                  <Typography variant="h3" sx={{ fontSize: '18px' }}>
-                    Priority Tasks
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <FlagIcon sx={{ fontSize: 24, color: '#FF4D4D' }} />
+                  <Typography variant="h3" sx={{ fontSize: '1.25rem' }}>
+                    Critical Objectives
                   </Typography>
                   <Chip 
                     label={urgentTasks.length + highPriorityTasks.length} 
                     size="small" 
                     sx={{ 
-                      bgcolor: 'rgba(239, 68, 68, 0.1)', 
-                      color: '#ef4444', 
-                      fontWeight: 700,
+                      bgcolor: 'rgba(255, 77, 77, 0.1)', 
+                      color: '#FF4D4D', 
+                      fontWeight: 900,
                       borderRadius: 1,
-                      border: '1px solid rgba(239, 68, 68, 0.2)'
+                      px: 0.5,
+                      fontSize: '0.7rem'
                     }} 
                   />
                 </Box>
@@ -295,12 +309,12 @@ export default function Dashboard() {
                   size="small"
                   endIcon={<ArrowIcon sx={{ fontSize: 14 }} />}
                   onClick={() => handleViewTasks('urgent')}
-                  sx={{ color: '#A1A1AA' }}
+                  sx={{ color: 'text.disabled', fontWeight: 700, '&:hover': { color: '#F2F2F2' } }}
                 >
-                  View All
+                  EXPAND VIEW
                 </Button>
               </Box>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {[...urgentTasks, ...highPriorityTasks].slice(0, 3).map((task) => (
                   <TaskItem key={task.id} task={task} compact />
                 ))}
@@ -311,28 +325,29 @@ export default function Dashboard() {
           {/* Today's Tasks */}
           <Paper
             sx={{
-              p: 3,
-              mb: 3,
-              borderRadius: 3,
-              backgroundColor: 'rgba(10, 10, 10, 0.5)',
-              border: '1px solid #222222',
+              p: 4,
+              mb: 4,
+              borderRadius: 4,
+              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <ScheduleIcon sx={{ fontSize: 20, color: '#00F0FF' }} />
-                <Typography variant="h3" sx={{ fontSize: '18px' }}>
-                  Today&apos;s Tasks
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <ScheduleIcon sx={{ fontSize: 24, color: '#00F5FF' }} />
+                <Typography variant="h2" sx={{ fontSize: '1.25rem' }}>
+                    Active Track
                 </Typography>
                 <Chip 
                   label={todayTasks.length} 
                   size="small" 
                   sx={{ 
-                    bgcolor: 'rgba(0, 240, 255, 0.1)', 
-                    color: '#00F0FF', 
-                    fontWeight: 700,
+                    bgcolor: 'rgba(0, 245, 255, 0.1)', 
+                    color: '#00F5FF', 
+                    fontWeight: 900,
                     borderRadius: 1,
-                    border: '1px solid rgba(0, 240, 255, 0.2)'
+                    px: 0.5,
+                    fontSize: '0.7rem'
                   }} 
                 />
               </Box>
@@ -340,28 +355,28 @@ export default function Dashboard() {
                 size="small"
                 endIcon={<ArrowIcon sx={{ fontSize: 14 }} />}
                 onClick={() => handleViewTasks('today')}
-                sx={{ color: '#A1A1AA' }}
+                sx={{ color: 'text.disabled', fontWeight: 700, '&:hover': { color: '#F2F2F2' } }}
               >
-                View All
+                FULL OVERVIEW
               </Button>
             </Box>
             {todayTasks.length > 0 ? (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {todayTasks.slice(0, 5).map((task) => (
                   <TaskItem key={task.id} task={task} compact />
                 ))}
               </Box>
             ) : (
-              <Box sx={{ textAlign: 'center', py: 6, color: '#404040', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <CheckIcon sx={{ fontSize: 48, marginBottom: 2, opacity: 0.2 }} />
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>No tasks due today!</Typography>
+              <Box sx={{ textAlign: 'center', py: 8, color: 'text.disabled', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CheckIcon sx={{ fontSize: 48, marginBottom: 2, opacity: 0.1 }} />
+                <Typography variant="body2" sx={{ fontWeight: 600, letterSpacing: '0.05em' }}>SYSTEMS OPTIMIZED / NO PENDING TASKS</Typography>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   size="small"
-                  sx={{ mt: 3 }}
+                  sx={{ mt: 3, borderRadius: 2, borderColor: 'rgba(255, 255, 255, 0.1)', color: '#F2F2F2' }}
                   onClick={() => setTaskDialogOpen(true)}
                 >
-                  Add a Task
+                  NEW ACTION ITEM
                 </Button>
               </Box>
             )}
@@ -373,60 +388,61 @@ export default function Dashboard() {
           {/* Progress Overview */}
           <Paper
             sx={{
-              p: 3,
-              mb: 3,
-              borderRadius: 3,
-              backgroundColor: 'rgba(10, 10, 10, 0.5)',
-              border: '1px solid #222222',
+              p: 4,
+              mb: 4,
+              borderRadius: 4,
+              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
             }}
           >
-            <Typography variant="h3" sx={{ fontSize: '18px', mb: 3 }}>
-              Weekly Progress
+            <Typography variant="overline" sx={{ fontWeight: 900, color: 'text.secondary', letterSpacing: '0.2em', mb: 4, display: 'block' }}>
+              RECOVERY METRICS
             </Typography>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="caption" sx={{ color: '#A1A1AA', fontWeight: 600 }}>
-                  TASKS COMPLETED
+            <Box sx={{ mb: 4 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 800 }}>
+                  EXECUTION QUOTA
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#F2F2F2', fontWeight: 700 }}>
-                  {completedTasks.length}/{activeTasks.length}
+                <Typography variant="caption" sx={{ color: '#00F5FF', fontWeight: 900 }}>
+                  {completedTasks.length} / {activeTasks.length}
                 </Typography>
               </Box>
               <LinearProgress
                 variant="determinate"
                 value={completionRate}
                 sx={{
-                  height: 6,
-                  borderRadius: 3,
-                  backgroundColor: '#141414',
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(255, 255, 255, 0.03)',
                   '& .MuiLinearProgress-bar': {
-                    borderRadius: 3,
-                    backgroundColor: '#10b981',
+                    borderRadius: 2,
+                    backgroundColor: '#00F5FF',
+                    boxShadow: '0 0 12px rgba(0, 245, 255, 0.5)'
                   },
                 }}
               />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, borderRadius: 2, backgroundColor: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, p: 3, borderRadius: 3, backgroundColor: 'rgba(255, 189, 46, 0.05)', border: '1px solid rgba(255, 189, 46, 0.1)' }}>
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 1.5,
-                  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(255, 189, 46, 0.1)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#f59e0b'
+                  color: '#FFBD2E'
                 }}
               >
-                <StreakIcon sx={{ fontSize: 20 }} />
+                <StreakIcon sx={{ fontSize: 24 }} />
               </Box>
               <Box>
-                <Typography variant="caption" sx={{ color: '#A1A1AA', fontWeight: 600, display: 'block' }}>
-                  CURRENT STREAK
+                <Typography variant="caption" sx={{ color: 'rgba(255, 189, 46, 0.7)', fontWeight: 800, letterSpacing: '0.05em', display: 'block', mb: 0.5 }}>
+                  FOCUS STREAK
                 </Typography>
-                <Typography variant="h5" fontWeight={800} sx={{ color: '#f59e0b' }}>
-                  5 days 🔥
+                <Typography variant="h4" sx={{ color: '#FFBD2E', fontWeight: 900, letterSpacing: '-0.02em' }}>
+                  5 DAYS
                 </Typography>
               </Box>
             </Box>
@@ -435,25 +451,26 @@ export default function Dashboard() {
           {/* Productivity Tip */}
           <Paper
             sx={{
-              p: 3,
-              mb: 3,
-              borderRadius: 3,
-              backgroundColor: 'rgba(0, 240, 255, 0.03)',
-              border: '1px solid rgba(0, 240, 255, 0.1)',
+              p: 4,
+              mb: 4,
+              borderRadius: 4,
+              backgroundColor: 'rgba(0, 245, 255, 0.02)',
+              border: '1px solid rgba(0, 245, 255, 0.1)',
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-              <TipIcon sx={{ fontSize: 18, color: '#00F0FF' }} />
-              <Typography variant="caption" sx={{ fontWeight: 800, color: '#00F0FF', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                Productivity Tip
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+              <TipIcon sx={{ fontSize: 20, color: '#00F5FF' }} />
+              <Typography variant="caption" sx={{ fontWeight: 900, color: '#00F5FF', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                NEURAL INSIGHT
               </Typography>
             </Box>
-            <Typography variant="body2" sx={{ color: '#A1A1AA', lineHeight: 1.6 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.8, fontWeight: 500 }}>
               {randomTip}
             </Typography>
           </Paper>
         </Grid>
       </Grid>
     </Box>
+  );
   );
 }
