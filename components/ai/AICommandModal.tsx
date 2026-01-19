@@ -19,13 +19,13 @@ import {
   Chip,
 } from '@mui/material';
 import {
-  AutoAwesome as AutoAwesomeIcon,
-  Close as CloseIcon,
-  Event as EventIcon,
-  CheckCircle as CheckCircleIcon,
-  AccessTime as ScheduleIcon,
-  Description as DescriptionIcon,
-} from '@mui/icons-material';
+  Sparkles,
+  X,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  FileText,
+} from 'lucide-react';
 import { useAI } from '@/hooks/useAI';
 import { useTask } from '@/context/TaskContext';
 import { useAuth } from '@/context/auth/AuthContext';
