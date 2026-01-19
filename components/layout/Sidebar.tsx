@@ -22,24 +22,24 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  Dashboard as DashboardIcon,
-  ListAlt as TasksIcon,
-  CalendarMonth as CalendarIcon,
-  CalendarToday as EventIcon,
-  Flag as FocusIcon,
-  Inbox as InboxIcon,
-  AccessTime as ScheduleIcon,
-  CheckCircle as CompletedIcon,
-  LocalOffer as LabelIcon,
-  Add as AddIcon,
-  ExpandLess,
-  ExpandMore,
-  Star as StarIcon,
-  ViewColumn as KanbanIcon,
-  GridOn as MatrixIcon,
-  BarChart as TimelineIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+  LayoutDashboard,
+  CheckSquare,
+  Calendar,
+  Zap,
+  Flame,
+  Inbox,
+  Clock,
+  CheckCircle2,
+  Tag,
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  Star,
+  Columns,
+  Grid2X2,
+  BarChart3,
+  Settings,
+} from 'lucide-react';
 import { useTask } from '@/context/TaskContext';
 
 const DRAWER_WIDTH = 256;
