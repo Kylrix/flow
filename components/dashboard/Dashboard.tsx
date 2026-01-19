@@ -11,6 +11,7 @@ import {
   Button,
   useTheme,
   alpha,
+  Divider,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -100,7 +101,7 @@ function StatCard({ title, value, subtitle, icon, color, trend, onClick }: StatC
             border: `1px solid ${alpha(color, 0.1)}`,
           }}
         >
-          {React.cloneElement(icon as React.ReactElement, { size: 22, strokeWidth: 1.5 })}
+          {React.cloneElement(icon as React.ReactElement<any>, { size: 22, strokeWidth: 1.5 })}
         </Box>
       </Box>
     </Paper>
