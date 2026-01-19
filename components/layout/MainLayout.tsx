@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
+import React, { useMemo } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Box, useTheme, useMediaQuery, alpha } from '@mui/material';
 import AppBar from '@/components/layout/AppBar';
@@ -23,14 +23,32 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { sidebarOpen } = useTask();
   const { secondarySidebar } = useLayout();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const isEmbedded = useMemo(() => searchParams?.get('is_embedded') === 'true', [searchParams]);
+
   // Hide sidebar on event details pages
   const isEventPage = pathname?.startsWith('/events/') && pathname.split('/').length > 2;
-  const showSidebar = !isMobile && !isEventPage;
-  const showRightSidebar = secondarySidebar.isOpen && !isMobile;
+  const showSidebar = !isMobile && !isEventPage && !isEmbedded;
+  const showRightSidebar = secondarySidebar.isOpen && !isMobile && !isEmbedded;
+
+  if (isEmbedded) {
+    return (
+      <Box sx={{ 
+        minHeight: '100vh', 
+        bgcolor: '#000', 
+        p: 2,
+        overflow: 'auto',
+        '&::-webkit-scrollbar': { display: 'none' }
+      }}>
+        {children}
+        <TaskDialog />
+      </Box>
+    );
+  }
 
   return (
     <Box
