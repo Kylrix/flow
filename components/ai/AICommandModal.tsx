@@ -115,7 +115,7 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
       const response = await generate(`${systemPrompt}\n\nUser Request: ${prompt}`);
       
       // Clean up the response to ensure it's valid JSON
-      const jsonStr = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
+      const jsonStr = response.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(jsonStr);
       
       setResult(parsed);
