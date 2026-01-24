@@ -1,4 +1,4 @@
-import { Client, TablesDB, Storage, Account } from "appwrite";
+import { Client, TablesDB, Storage, Account, Realtime } from "appwrite";
 import { APPWRITE_CONFIG } from "./config";
 
 const client = new Client();
@@ -13,6 +13,7 @@ if (APPWRITE_CONFIG.PROJECT_ID) {
 export const tablesDB = new TablesDB(client);
 export const storage = new Storage(client);
 export const account = new Account(client);
+export const realtime = new Realtime(client);
 export { client };
 
 // --- USER SESSION ---

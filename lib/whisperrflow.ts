@@ -1,9 +1,31 @@
 import { ID, Models } from "appwrite";
-import { tablesDB } from "./appwrite";
+import { tablesDB, realtime } from "./appwrite";
 import { APPWRITE_CONFIG } from "./config";
 import { Calendar, Task, Event, EventGuest, FocusSession } from "../types/whisperrflow";
 
 const { DATABASE_ID, TABLES } = APPWRITE_CONFIG;
+
+export { realtime };
+
+export function subscribeToTable<T extends Models.Row>(
+    tableId: string, 
+    callback: (event: { type: 'create' | 'update' | 'delete', payload: T }) => void
+) {
+    const channel = `databases.${DATABASE_ID}.collections.${tableId}.documents`;
+    
+    return realtime.subscribe(channel, (response) => {
+        const payload = response.payload as T;
+        let type: 'create' | 'update' | 'delete' | null = null;
+
+        if (response.events.some(e => e.includes('.create'))) type = 'create';
+        else if (response.events.some(e => e.includes('.update'))) type = 'update';
+        else if (response.events.some(e => e.includes('.delete'))) type = 'delete';
+
+        if (type) {
+            callback({ type, payload });
+        }
+    });
+}
 
 type TableCreateData<T extends Models.Row> =
     T extends Models.DefaultRow
