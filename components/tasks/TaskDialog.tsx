@@ -28,12 +28,15 @@ import {
   CalendarToday as CalendarIcon,
   Folder as FolderIcon,
   Label as LabelIcon,
+  AttachFile as AttachFileIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useTask } from '@/context/TaskContext';
 import { Priority, TaskStatus } from '@/types';
+import { taskAttachments } from '@/lib/storage';
 
 const priorityOptions: { value: Priority; label: string; color: string }[] = [
   { value: 'low', label: 'Low', color: '#94a3b8' },
@@ -68,6 +71,8 @@ export default function TaskDialog() {
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [estimatedTime, setEstimatedTime] = useState('');
+  const [pendingAttachments, setPendingAttachments] = useState<{ id: string, name: string }[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleClose = () => {
     setTaskDialogOpen(false);
@@ -83,6 +88,37 @@ export default function TaskDialog() {
     setSelectedLabels([]);
     setDueDate(null);
     setEstimatedTime('');
+    setPendingAttachments([]);
+    setIsUploading(false);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const result = await taskAttachments.upload(file);
+        return { id: result.$id, name: file.name };
+      });
+
+      const newAttachments = await Promise.all(uploadPromises);
+      setPendingAttachments((prev) => [...prev, ...newAttachments]);
+    } catch (error) {
+      console.error('Failed to upload attachments:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveAttachment = async (id: string) => {
+    try {
+      await taskAttachments.delete(id);
+      setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+    } catch (error) {
+      console.error('Failed to delete attachment:', error);
+    }
   };
 
   const handleSubmit = () => {
@@ -99,7 +135,7 @@ export default function TaskDialog() {
       estimatedTime: estimatedTime ? parseInt(estimatedTime, 10) : undefined,
       subtasks: [],
       comments: [],
-      attachments: [],
+      attachments: pendingAttachments.map(a => a.id),
       reminders: [],
       timeEntries: [],
       assigneeIds: ['user-1'],
@@ -308,6 +344,56 @@ export default function TaskDialog() {
                     ))}
                     </Select>
                 </FormControl>
+                </Box>
+            </Box>
+
+            {/* Attachments Section */}
+            <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, letterSpacing: '0.05em' }}>
+                        ATTACHMENTS
+                    </Typography>
+                    <Button
+                        component="label"
+                        size="small"
+                        startIcon={<AttachFileIcon sx={{ fontSize: 16 }} />}
+                        sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#00F5FF' }}
+                    >
+                        ADD ATTACHMENT
+                        <input
+                            type="file"
+                            hidden
+                            multiple
+                            onChange={handleFileChange}
+                        />
+                    </Button>
+                </Box>
+                
+                {isUploading && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <CircularProgress size={12} sx={{ color: '#00F5FF' }} />
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>Uploading files...</Typography>
+                    </Box>
+                )}
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {pendingAttachments.map((file) => (
+                        <Chip
+                            key={file.id}
+                            label={file.name}
+                            size="small"
+                            onDelete={() => handleRemoveAttachment(file.id)}
+                            deleteIcon={<DeleteIcon sx={{ fontSize: '14px !important' }} />}
+                            sx={{
+                                bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                color: 'text.secondary',
+                                borderRadius: 1,
+                                fontSize: '0.75rem',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                '& .MuiChip-deleteIcon': { color: 'rgba(255, 255, 255, 0.3)', '&:hover': { color: '#ef4444' } }
+                            }}
+                        />
+                    ))}
                 </Box>
             </Box>
 
