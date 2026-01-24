@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext, useReducer, useCallback, ReactNode, useEffect } from 'react';
 import { ID } from 'appwrite';
-import { tasks as taskApi, calendars as calendarApi } from '@/lib/whisperrflow';
+import { tasks as taskApi, calendars as calendarApi, subscribeToTable } from '@/lib/whisperrflow';
 import { account } from '@/lib/appwrite';
+import { APPWRITE_CONFIG } from '@/lib/config';
 import { Task as AppwriteTask, Calendar as AppwriteCalendar } from '@/types/whisperrflow';
 import {
   Task,
@@ -458,6 +459,42 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
     fetchData();
   }, []);
+
+  // Realtime Subscriptions
+  useEffect(() => {
+    if (!state.userId) return;
+
+    // Subscribe to Tasks
+    const unsubscribeTasks = subscribeToTable<AppwriteTask>(APPWRITE_CONFIG.TABLES.TASKS, ({ type, payload }) => {
+      if (payload.userId !== state.userId) return;
+
+      if (type === 'create') {
+        dispatch({ type: 'ADD_TASK', payload: mapAppwriteTaskToTask(payload) });
+      } else if (type === 'update') {
+        dispatch({ type: 'UPDATE_TASK', payload: { id: payload.$id, updates: mapAppwriteTaskToTask(payload) } });
+      } else if (type === 'delete') {
+        dispatch({ type: 'DELETE_TASK', payload: payload.$id });
+      }
+    });
+
+    // Subscribe to Calendars/Projects
+    const unsubscribeProjects = subscribeToTable<AppwriteCalendar>(APPWRITE_CONFIG.TABLES.CALENDARS, ({ type, payload }) => {
+      if (payload.userId !== state.userId) return;
+
+      if (type === 'create') {
+        dispatch({ type: 'ADD_PROJECT', payload: mapAppwriteCalendarToProject(payload) });
+      } else if (type === 'update') {
+        dispatch({ type: 'UPDATE_PROJECT', payload: { id: payload.$id, updates: mapAppwriteCalendarToProject(payload) } });
+      } else if (type === 'delete') {
+        dispatch({ type: 'DELETE_PROJECT', payload: payload.$id });
+      }
+    });
+
+    return () => {
+      unsubscribeTasks();
+      unsubscribeProjects();
+    };
+  }, [state.userId]);
 
   // Task actions
   const addTask = useCallback(
