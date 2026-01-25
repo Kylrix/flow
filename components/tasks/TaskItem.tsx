@@ -27,11 +27,13 @@ import {
   AttachFile as AttachmentIcon,
   Archive as ArchiveIcon,
   ContentCopy as CopyIcon,
+  Assignment as NoteIcon,
 } from '@mui/icons-material';
 import { format, isToday, isTomorrow, isPast, isThisWeek } from 'date-fns';
 import { Task, Priority } from '@/types';
 import { useTask } from '@/context/TaskContext';
 import { useLayout } from '@/context/LayoutContext';
+import { NoteSelectorModal } from '../common/NoteSelectorModal';
 
 interface TaskItemProps {
   task: Task;
@@ -58,6 +60,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
   const { completeTask, deleteTask, updateTask, labels, projects, selectTask } = useTask();
   const { openSecondarySidebar } = useLayout();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const project = projects.find((p) => p.id === task.projectId);
@@ -66,6 +69,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
   const totalSubtasks = task.subtasks.length;
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
@@ -87,6 +91,16 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
   const handleArchive = () => {
     handleMenuClose();
     updateTask(task.id, { isArchived: true });
+  };
+
+  const handleAttachNote = async (noteId: string) => {
+    setIsNoteModalOpen(false);
+    const tag = `source:whisperrnote:${noteId}`;
+    if (task.labels.includes(tag)) return;
+
+    updateTask(task.id, {
+      labels: [...task.labels, tag]
+    });
   };
 
   const formatDueDate = (date: Date) => {
@@ -112,6 +126,7 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
           openSecondarySidebar('task', task.id);
           onClick?.();
         }}
+        onContextMenu={handleMenuClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         sx={{
@@ -313,12 +328,21 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
           <ListItemIcon><ArchiveIcon sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
           <ListItemText primary="Archive" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
         </MenuItem>
+        <MenuItem onClick={() => { setIsNoteModalOpen(true); handleMenuClose(); }}>
+          <ListItemIcon><NoteIcon sx={{ fontSize: 16, color: '#00F5FF' }} /></ListItemIcon>
+          <ListItemText primary="Attach Note" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+        </MenuItem>
         <Box sx={{ my: 0.5, height: '1px', backgroundColor: '#222222' }} />
         <MenuItem onClick={handleDelete} sx={{ color: '#ef4444' }}>
           <ListItemIcon><DeleteIcon sx={{ fontSize: 16, color: '#ef4444' }} /></ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }} />
         </MenuItem>
       </Menu>
+      <NoteSelectorModal
+        isOpen={isNoteModalOpen}
+        onClose={() => setIsNoteModalOpen(false)}
+        onSelect={handleAttachNote}
+      />
     </>
   );
 });

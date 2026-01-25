@@ -552,6 +552,19 @@ export function TaskProvider({ children }: TaskProviderProps) {
       if (updates.status !== undefined) apiUpdates.status = updates.status;
       if (updates.priority !== undefined) apiUpdates.priority = updates.priority;
       if (updates.dueDate !== undefined) apiUpdates.dueDate = updates.dueDate?.toISOString();
+      if (updates.labels !== undefined) {
+        const currentTask = state.tasks.find(t => t.id === id);
+        const projectId = updates.projectId || currentTask?.projectId;
+        const finalTags = [...updates.labels];
+        
+        if (projectId && projectId !== 'inbox') {
+          const projectTag = `project:${projectId}`;
+          if (!finalTags.includes(projectTag)) {
+            finalTags.push(projectTag);
+          }
+        }
+        apiUpdates.tags = finalTags;
+      }
       if (updates.projectId !== undefined) {
          // We need to fetch current tags to update project tag
          // For now, this is complex without reading current task state inside callback
