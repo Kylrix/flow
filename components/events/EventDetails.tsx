@@ -27,6 +27,8 @@ import { generateEventPattern } from '@/utils/patternGenerator';
 import { Event as AppwriteEvent } from '@/types/whisperrflow';
 import { Event as LocalEvent } from '@/types';
 import { NoteSelectorModal } from '../common/NoteSelectorModal';
+import { SecretSelectorModal } from '../common/SecretSelectorModal';
+import { VpnKey as KeyIcon } from '@mui/icons-material';
 
 interface EventDetailsProps {
   eventId: string;
@@ -40,6 +42,7 @@ export default function EventDetails({ eventId, initialData }: EventDetailsProps
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
 
   const handleAttachNote = async (noteId: string) => {
     if (!event) return;
@@ -55,6 +58,23 @@ export default function EventDetails({ eventId, initialData }: EventDetailsProps
       setEvent(updated);
     } catch (err) {
       console.error('Failed to link note to event:', err);
+    }
+  };
+
+  const handleAttachSecret = async (secretId: string) => {
+    if (!event) return;
+    setIsSecretModalOpen(false);
+    const tag = `source:whisperrkeep:${secretId}`;
+    const currentTags = (event as any).tags || [];
+    if (currentTags.includes(tag)) return;
+
+    try {
+      const updated = await eventApi.update(eventId, {
+        tags: [...currentTags, tag]
+      });
+      setEvent(updated);
+    } catch (err) {
+      console.error('Failed to link secret to event:', err);
     }
   };
 
@@ -239,6 +259,29 @@ export default function EventDetails({ eventId, initialData }: EventDetailsProps
             >
               {(event as any).tags?.some((t: string) => t.startsWith('source:whisperrnote:')) ? 'View Source Note' : 'Link Note'}
             </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<KeyIcon sx={{ fontSize: 16, color: (event as any).tags?.some((t: string) => t.startsWith('source:whisperrkeep:')) ? '#FFD700' : 'inherit' }} />}
+              onClick={() => {
+                const sourceTag = (event as any).tags?.find((t: string) => t.startsWith('source:whisperrkeep:'));
+                if (sourceTag) {
+                  const secretId = sourceTag.split(':')[2];
+                  window.open(`https://keep.whisperrnote.space/vault?id=${secretId}`, '_blank');
+                } else {
+                  setIsSecretModalOpen(true);
+                }
+              }}
+              sx={{ 
+                justifyContent: 'flex-start', 
+                border: '1px solid rgba(255, 255, 255, 0.05)', 
+                bgcolor: 'rgba(255, 255, 255, 0.01)', 
+                fontSize: '0.75rem',
+                color: (event as any).tags?.some((t: string) => t.startsWith('source:whisperrkeep:')) ? '#FFD700' : 'inherit'
+              }}
+            >
+              {(event as any).tags?.some((t: string) => t.startsWith('source:whisperrkeep:')) ? 'View Secret' : 'Link Secret'}
+            </Button>
           </Box>
         </Box>
 
@@ -281,6 +324,11 @@ export default function EventDetails({ eventId, initialData }: EventDetailsProps
         isOpen={isNoteModalOpen}
         onClose={() => setIsNoteModalOpen(false)}
         onSelect={handleAttachNote}
+      />
+      <SecretSelectorModal
+        isOpen={isSecretModalOpen}
+        onClose={() => setIsSecretModalOpen(false)}
+        onSelect={handleAttachSecret}
       />
     </Box>
   );
