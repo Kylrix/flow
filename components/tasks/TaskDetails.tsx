@@ -46,6 +46,7 @@ import { useLayout } from '@/context/LayoutContext';
 import { useAI } from '@/hooks/useAI';
 import dynamic from 'next/dynamic';
 import { NoteSelectorModal } from '../common/NoteSelectorModal';
+import { SecretSelectorModal } from '../common/SecretSelectorModal';
 
 const OriginSocialSection = dynamic(() => import('./OriginSocialSection'), {
   loading: () => null,
@@ -95,6 +96,7 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
   const [statusAnchor, setStatusAnchor] = useState<null | HTMLElement>(null);
   const [priorityAnchor, setPriorityAnchor] = useState<null | HTMLElement>(null);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
 
   // AI Integration
   const { generate } = useAI();
@@ -107,6 +109,17 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
 
     updateTask(task.id, {
       linkedNotes: [...currentNotes, noteId]
+    });
+  };
+
+  const handleAttachSecret = async (secretId: string) => {
+    setIsSecretModalOpen(false);
+    const tag = `source:whisperrkeep:${secretId}`;
+    const currentTags = (task as any).labels || [];
+    if (currentTags.includes(tag)) return;
+
+    updateTask(task.id, {
+      labels: [...currentTags, tag]
     });
   };
 
@@ -523,6 +536,29 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
             <Button
               variant="outlined"
               size="small"
+              startIcon={<ScheduleIcon sx={{ fontSize: 16, color: task.labels?.some(t => t.startsWith('source:whisperrkeep:')) ? '#FFD700' : 'inherit' }} />}
+              onClick={() => {
+                const sourceTag = task.labels?.find(t => t.startsWith('source:whisperrkeep:'));
+                if (sourceTag) {
+                  const secretId = sourceTag.split(':')[2];
+                  window.open(`https://keep.whisperrnote.space/vault?id=${secretId}`, '_blank');
+                } else {
+                  setIsSecretModalOpen(true);
+                }
+              }}
+              sx={{ 
+                justifyContent: 'flex-start', 
+                border: '1px solid rgba(255, 255, 255, 0.05)', 
+                bgcolor: 'rgba(255, 255, 255, 0.01)', 
+                fontSize: '0.75rem',
+                color: task.labels?.some(t => t.startsWith('source:whisperrkeep:')) ? '#FFD700' : 'inherit'
+              }}
+            >
+              {task.labels?.some(t => t.startsWith('source:whisperrkeep:')) ? 'View Secret' : 'Link Secret'}
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
               startIcon={<CalendarIcon sx={{ fontSize: 16 }} />}
               sx={{ justifyContent: 'flex-start', border: '1px solid rgba(255, 255, 255, 0.05)', bgcolor: 'rgba(255, 255, 255, 0.01)', fontSize: '0.75rem' }}
             >
@@ -636,6 +672,11 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
         isOpen={isNoteModalOpen}
         onClose={() => setIsNoteModalOpen(false)}
         onSelect={handleAttachNote}
+      />
+      <SecretSelectorModal
+        isOpen={isSecretModalOpen}
+        onClose={() => setIsSecretModalOpen(false)}
+        onSelect={handleAttachSecret}
       />
     </Box>
   );

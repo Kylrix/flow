@@ -27,7 +27,9 @@ import { generateEventPattern as generatePattern } from '@/utils/patternGenerato
 import { useState } from 'react';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { NoteSelectorModal } from '../common/NoteSelectorModal';
+import { SecretSelectorModal } from '../common/SecretSelectorModal';
 import { events as eventApi } from '@/lib/whisperrflow';
+import { VpnKey as KeyIcon } from '@mui/icons-material';
 
 interface EventCardProps {
   event: Event;
@@ -39,6 +41,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
   const pattern = generatePattern(event.id);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
   
   const getDateLabel = () => {
     const date = new Date(event.startTime);
@@ -71,6 +74,21 @@ export default function EventCard({ event, onClick }: EventCardProps) {
       });
     } catch (err) {
       console.error('Failed to link note to event:', err);
+    }
+  };
+
+  const handleAttachSecret = async (secretId: string) => {
+    setIsSecretModalOpen(false);
+    const tag = `source:whisperrkeep:${secretId}`;
+    const currentTags = (event as any).tags || [];
+    if (currentTags.includes(tag)) return;
+
+    try {
+      await eventApi.update(event.id, {
+        tags: [...currentTags, tag]
+      });
+    } catch (err) {
+      console.error('Failed to link secret to event:', err);
     }
   };
 
