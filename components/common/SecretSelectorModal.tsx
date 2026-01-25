@@ -48,7 +48,7 @@ export function SecretSelectorModal({ isOpen, onClose, onSelect }: SecretSelecto
         setLoading(true);
         try {
           const res = await secretsApi.list();
-          setSecrets(res.documents as any[]);
+          setSecrets((res.rows || (res as any).documents) as any[]);
         } catch (err) {
           console.error('Failed to fetch secrets:', err);
         } finally {
@@ -59,7 +59,7 @@ export function SecretSelectorModal({ isOpen, onClose, onSelect }: SecretSelecto
     }
   }, [isOpen]);
 
-  const filtered = secrets.filter(s => 
+  const filtered = secrets.filter(s =>
     (s.name || '').toLowerCase().includes(search.toLowerCase()) ||
     (s.username || '').toLowerCase().includes(search.toLowerCase())
   );
@@ -139,14 +139,14 @@ export function SecretSelectorModal({ isOpen, onClose, onSelect }: SecretSelecto
                     }
                   }}
                 >
-                  <ListItemText 
-                    primary={item.name} 
+                  <ListItemText
+                    primary={item.name}
                     secondary={item.username}
-                    primaryTypographyProps={{ 
-                      fontSize: '0.9rem', 
+                    primaryTypographyProps={{
+                      fontSize: '0.9rem',
                       fontWeight: 700,
                       color: '#F2F2F2'
-                    }} 
+                    }}
                     secondaryTypographyProps={{
                       fontSize: '0.75rem',
                       color: 'text.secondary'

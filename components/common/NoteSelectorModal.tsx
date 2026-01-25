@@ -48,7 +48,7 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
         setLoading(true);
         try {
           const res = await notesApi.list();
-          setNotes(res.documents as any[]);
+          setNotes((res.rows || (res as any).documents) as any[]);
         } catch (err) {
           console.error('Failed to fetch notes:', err);
         } finally {
@@ -59,7 +59,7 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
     }
   }, [isOpen]);
 
-  const filteredNotes = notes.filter(note => 
+  const filteredNotes = notes.filter(note =>
     (note.title || '').toLowerCase().includes(search.toLowerCase()) ||
     (note.content || '').toLowerCase().includes(search.toLowerCase())
   );
@@ -139,14 +139,14 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
                     }
                   }}
                 >
-                  <ListItemText 
-                    primary={note.title || 'Untitled Note'} 
+                  <ListItemText
+                    primary={note.title || 'Untitled Note'}
                     secondary={note.content ? (note.content.substring(0, 60) + '...') : ''}
-                    primaryTypographyProps={{ 
-                      fontSize: '0.9rem', 
+                    primaryTypographyProps={{
+                      fontSize: '0.9rem',
                       fontWeight: 700,
                       color: '#F2F2F2'
-                    }} 
+                    }}
                     secondaryTypographyProps={{
                       fontSize: '0.75rem',
                       color: 'text.secondary'

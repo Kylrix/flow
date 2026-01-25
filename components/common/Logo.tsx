@@ -17,7 +17,7 @@ const sizeMap = {
   large: { image: 48, fontSize: '1.5rem' },
 };
 
-export default function Logo({ size = 'medium', showText = true, linkToHome = true }: LogoProps) {
+export function Logo({ size = 'medium', showText = true, linkToHome = true }: LogoProps) {
   const theme = useTheme();
   const dimensions = sizeMap[size];
 
@@ -38,7 +38,7 @@ export default function Logo({ size = 'medium', showText = true, linkToHome = tr
           alt={APP_CONFIG.logo.alt}
           width={dimensions.image}
           height={dimensions.image}
-          style={{ 
+          style={{
             objectFit: 'cover',
             width: '100%',
             height: '100%',
