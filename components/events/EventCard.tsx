@@ -300,6 +300,10 @@ export default function EventCard({ event, onClick }: EventCardProps) {
           <ListItemIcon><NoteIcon sx={{ fontSize: 16, color: '#00F5FF' }} /></ListItemIcon>
           <ListItemText primary="Attach Note" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
         </MenuItem>
+        <MenuItem onClick={() => { setIsSecretModalOpen(true); handleMenuClose(); }}>
+          <ListItemIcon><KeyIcon sx={{ fontSize: 16, color: '#FFD700' }} /></ListItemIcon>
+          <ListItemText primary="Attach Secret (Keep)" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+        </MenuItem>
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon><Share fontSize="small" sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
           <ListItemText primary="Share Event" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
