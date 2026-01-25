@@ -116,12 +116,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const currentUser = await account.get();
       setUser(currentUser);
+
+      // Sync to Global Identity Directory (WhisperrConnect)
+      try {
+        const { ensureGlobalIdentity } = await import('@/lib/ecosystem/identity');
+        ensureGlobalIdentity(currentUser);
+      } catch (e) {
+        console.warn('Ecosystem identity handshake failed', e);
+      }
+
       setShowAuthOverlay(false);
       if (authWindow) {
         authWindow.close();
         setAuthWindow(null);
       }
-      
+
       // Clear the auth=success param from URL if it exists
       if (typeof window !== 'undefined' && window.location.search.includes('auth=success')) {
         const url = new URL(window.location.href);
@@ -131,7 +140,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error: any) {
       // Check for auth=success signal in URL - this means we just came from IDM
       const hasAuthSignal = typeof window !== 'undefined' && window.location.search.includes('auth=success');
-      
+
       if (hasAuthSignal && retryCount < 3) {
         console.log(`Auth signal detected but session not found. Retrying... (${retryCount + 1})`);
         await new Promise(resolve => setTimeout(resolve, 1000));

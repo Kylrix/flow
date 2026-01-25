@@ -33,12 +33,43 @@ import { format } from 'date-fns';
 import { Query } from 'appwrite';
 import { generateEventPattern } from '@/utils/patternGenerator';
 import { eventPermissions } from '@/lib/permissions';
+import { fetchProfilePreview } from '@/lib/profile-preview';
+
+function AttendeeAvatar({ guest, theme }: { guest: any, theme: any }) {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const { searchGlobalUsers } = await import('@/lib/ecosystem/identity');
+        const users = await searchGlobalUsers(guest.userId, 1);
+        if (users.length > 0 && users[0].profilePicId) {
+          const preview = await fetchProfilePreview(users[0].profilePicId, 64, 64);
+          if (mounted) setUrl(preview);
+        }
+      } catch { }
+    };
+    load();
+    return () => { mounted = false; };
+  }, [guest.userId]);
+
+  return (
+    <Avatar
+      src={url || undefined}
+      alt={guest.email}
+      sx={{ bgcolor: alpha(theme.palette.primary.main, 0.2), color: theme.palette.primary.main, fontWeight: 800 }}
+    >
+      {guest.email?.charAt(0).toUpperCase() || 'U'}
+    </Avatar>
+  );
+}
 
 export default function EventPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const theme = useTheme();
   const { user, isAuthenticated, openLoginPopup } = useAuth();
-  
+
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,26 +78,21 @@ export default function EventPage() {
   const [guestId, setGuestId] = useState<string | null>(null);
   const [registering, setRegistering] = useState(false);
   const [shareTooltipOpen, setShareTooltipOpen] = useState(false);
+  const [attendees, setAttendees] = useState<any[]>([]);
 
-  // Fetch event details - this works for public/unlisted events without auth
+  // Fetch event details
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        setIsPrivateEvent(false);
         const eventData = await eventApi.get(eventId);
-        
-        // Check if event is private and user doesn't have access
         if (eventData.visibility === 'private' && (!user || eventData.userId !== user.$id)) {
           setIsPrivateEvent(true);
           setError('This event is private.');
           return;
         }
-        
         setEvent(eventData);
       } catch (err: any) {
-        console.error('Failed to fetch event:', err);
-        // Check if it's a permission error (private event)
         if (err?.code === 401 || err?.code === 404) {
           setIsPrivateEvent(true);
           setError('This event is private or does not exist.');
@@ -77,23 +103,18 @@ export default function EventPage() {
         setLoading(false);
       }
     };
-
-    if (eventId) {
-      fetchEvent();
-    }
+    if (eventId) fetchEvent();
   }, [eventId, user]);
 
-  // Check registration status if user is logged in
+  // Check registration status
   useEffect(() => {
     const checkRegistration = async () => {
       if (!user || !eventId) return;
-
       try {
         const guests = await guestApi.list([
           Query.equal('eventId', eventId),
           Query.equal('userId', user.$id),
         ]);
-
         if (guests.total > 0) {
           setIsRegistered(true);
           setGuestId(guests.rows[0].$id);
@@ -101,25 +122,28 @@ export default function EventPage() {
           setIsRegistered(false);
           setGuestId(null);
         }
-      } catch (err) {
-        console.error('Failed to check registration:', err);
-      }
+      } catch { }
     };
-
     checkRegistration();
   }, [user, eventId]);
 
+  // Fetch all attendees
+  useEffect(() => {
+    const fetchAttendees = async () => {
+      if (!eventId) return;
+      try {
+        const guests = await guestApi.list([Query.equal('eventId', eventId)]);
+        setAttendees(guests.rows);
+      } catch { }
+    };
+    fetchAttendees();
+  }, [eventId, isRegistered]);
+
   const handleRegister = async () => {
-    if (!isAuthenticated) {
-        openLoginPopup();
-        return;
-    }
-
+    if (!isAuthenticated) { openLoginPopup(); return; }
     if (!user || !event) return;
-
     try {
       setRegistering(true);
-      
       const newGuest = await guestApi.create({
         eventId: event.$id,
         userId: user.$id,
@@ -127,29 +151,19 @@ export default function EventPage() {
         status: 'accepted',
         role: 'attendee',
       });
-
       setIsRegistered(true);
       setGuestId(newGuest.$id);
-    } catch (err) {
-      console.error('Registration failed:', err);
-    } finally {
-      setRegistering(false);
-    }
+    } catch { } finally { setRegistering(false); }
   };
 
   const handleCancelRegistration = async () => {
     if (!guestId) return;
-
     try {
       setRegistering(true);
       await guestApi.delete(guestId);
       setIsRegistered(false);
       setGuestId(null);
-    } catch (err) {
-      console.error('Cancellation failed:', err);
-    } finally {
-      setRegistering(false);
-    }
+    } catch { } finally { setRegistering(false); }
   };
 
   const handleCopyLink = () => {
@@ -163,8 +177,6 @@ export default function EventPage() {
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 3, mb: 4 }} />
         <Skeleton variant="text" height={60} width="80%" />
-        <Skeleton variant="text" height={30} width="40%" />
-        <Skeleton variant="text" height={200} sx={{ mt: 2 }} />
       </Container>
     );
   }
@@ -172,52 +184,7 @@ export default function EventPage() {
   if (error || !event) {
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
-        {isPrivateEvent ? (
-          <>
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                backgroundColor: alpha(theme.palette.warning.main, 0.1),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mx: 'auto',
-                mb: 3,
-              }}
-            >
-              <LockIcon sx={{ fontSize: 40, color: theme.palette.warning.main }} />
-            </Box>
-            <Typography variant="h4" gutterBottom>
-              Private Event
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
-              This event is private and only visible to the organizer. 
-              {!isAuthenticated && ' Sign in to check if you have access.'}
-            </Typography>
-            {!isAuthenticated ? (
-              <Button variant="contained" onClick={openLoginPopup} sx={{ mr: 2 }}>
-                Sign In
-              </Button>
-            ) : null}
-            <Button variant="outlined" href="/events">
-              Browse Public Events
-            </Button>
-          </>
-        ) : (
-          <>
-            <Typography variant="h4" gutterBottom>
-              Oops!
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 4 }}>
-              {error || "We couldn't find that event."}
-            </Typography>
-            <Button variant="outlined" href="/events">
-              Browse Events
-            </Button>
-          </>
-        )}
+        <Typography variant="h4">{error || "Event not found"}</Typography>
       </Container>
     );
   }
@@ -231,206 +198,37 @@ export default function EventPage() {
   return (
     <Box sx={{ minHeight: '100%', pb: 8 }}>
       <Container maxWidth="md" sx={{ px: { xs: 0, sm: 2 } }}>
-        <Paper
-          sx={{
-            overflow: 'hidden',
-            borderRadius: { xs: 0, sm: 3 },
-            boxShadow: theme.shadows[4],
-            mb: 4,
-          }}
-        >
-          {/* Cover Image / Pattern */}
-          <Box
-            sx={{
-              height: { xs: 250, md: 350 },
-              width: '100%',
-              position: 'relative',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              ...coverStyle,
-            }}
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                display: 'flex',
-                gap: 1,
-              }}
-            >
-              <Tooltip
-                title={shareTooltipOpen ? "Link copied!" : "Copy link"}
-                open={shareTooltipOpen}
-                onClose={() => setShareTooltipOpen(false)}
-                arrow
-              >
-                <Button
-                  variant="contained"
-                  color="inherit"
-                  size="small"
-                  onClick={handleCopyLink}
-                  sx={{
-                    minWidth: 'auto',
-                    p: 1,
-                    backgroundColor: 'rgba(255,255,255,0.9)',
-                    color: 'text.primary',
-                    '&:hover': { backgroundColor: '#fff' },
-                  }}
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </Button>
-              </Tooltip>
+        <Paper sx={{ overflow: 'hidden', borderRadius: { xs: 0, sm: 3 }, mb: 4 }}>
+          <Box sx={{ height: { xs: 250, md: 350 }, position: 'relative', backgroundSize: 'cover', ...coverStyle }}>
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+              <Button variant="contained" color="inherit" onClick={handleCopyLink}><ContentCopyIcon fontSize="small" /></Button>
             </Box>
           </Box>
 
           <Box sx={{ p: { xs: 3, md: 5 } }}>
-            {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-              <Box>
-                <Typography variant="h3" fontWeight={800} gutterBottom sx={{ lineHeight: 1.2 }}>
-                  {event.title}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
-                  <Chip
-                    icon={eventPermissions.isPublic(event.visibility) ? <PublicIcon /> : <LockIcon />}
-                    label={event.visibility === 'unlisted' ? 'Unlisted' : event.visibility === 'private' ? 'Private' : 'Public'}
-                    size="small"
-                    color={eventPermissions.isPublic(event.visibility) ? 'success' : 'default'}
-                    variant="outlined"
-                  />
-                  {event.status === 'cancelled' && (
-                    <Chip label="Cancelled" size="small" color="error" />
-                  )}
-                </Box>
-              </Box>
-            </Box>
+            <Typography variant="h3" fontWeight={800} gutterBottom>{event.title}</Typography>
 
-            {/* Registration Area */}
-            <Paper
-              variant="outlined"
-              sx={{
-                p: 3,
-                mb: 4,
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 2,
-                backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                borderColor: alpha(theme.palette.primary.main, 0.2),
-              }}
-            >
+            <Paper variant="outlined" sx={{ p: 3, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
               <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <CalendarIcon color="primary" fontSize="small" />
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {format(startDate, 'EEEE, MMMM d, yyyy')}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <TimeIcon color="action" fontSize="small" />
-                  <Typography variant="body2" color="text.secondary">
-                    {format(startDate, 'h:mm a')} - {format(endDate, 'h:mm a')}
-                  </Typography>
-                </Box>
+                <Typography variant="subtitle1" fontWeight={600}>{format(startDate, 'EEEE, MMMM d, yyyy')}</Typography>
+                <Typography variant="body2" color="text.secondary">{format(startDate, 'h:mm a')} - {format(endDate, 'h:mm a')}</Typography>
               </Box>
-
-              <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
-                {isRegistered ? (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'stretch', sm: 'flex-end' } }}>
-                    <Chip
-                      icon={<CheckCircleIcon />}
-                      label="You're attending"
-                      color="success"
-                      sx={{ mb: 1, width: 'fit-content', alignSelf: { xs: 'center', sm: 'flex-end' } }}
-                    />
-                    <Button
-                      variant="text"
-                      color="error"
-                      size="small"
-                      onClick={handleCancelRegistration}
-                      disabled={registering}
-                    >
-                      Cancel Registration
-                    </Button>
-                  </Box>
-                ) : (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    onClick={handleRegister}
-                    disabled={registering || event.status === 'cancelled'}
-                    fullWidth
-                    sx={{ minWidth: 160 }}
-                  >
-                    {registering ? 'Processing...' : isAuthenticated ? 'Register' : 'Sign in to Register'}
-                  </Button>
-                )}
-              </Box>
+              <Button variant="contained" onClick={isRegistered ? handleCancelRegistration : handleRegister} disabled={registering}>
+                {registering ? '...' : isRegistered ? 'Cancel' : 'Register'}
+              </Button>
             </Paper>
 
-            {/* Description */}
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight={700} gutterBottom>
-                About
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
-                {event.description || 'No description provided.'}
-              </Typography>
+              <Typography variant="h6" fontWeight={700} gutterBottom>About</Typography>
+              <Typography variant="body1" color="text.secondary">{event.description}</Typography>
             </Box>
 
-            {/* Location */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight={700} gutterBottom>
-                Location
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                <Paper
-                  sx={{
-                    p: 1,
-                    backgroundColor: alpha(theme.palette.action.active, 0.05),
-                    borderRadius: 2,
-                    boxShadow: 'none',
-                  }}
-                >
-                  <LocationIcon color="action" />
-                </Paper>
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {event.location || 'Online Event'}
-                  </Typography>
-                  {event.meetingUrl && (
-                    <Button
-                      href={event.meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="outlined"
-                      size="small"
-                      sx={{ mt: 1 }}
-                    >
-                      Join Meeting
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Attendees */}
             <Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" fontWeight={700}>
-                  Attendees
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {event.maxAttendees ? `Limited to ${event.maxAttendees} spots` : 'Unlimited spots'}
-                </Typography>
-              </Box>
+              <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>Attendees</Typography>
               <AvatarGroup max={6} sx={{ justifyContent: 'flex-start' }}>
-                <Avatar />
-                <Avatar />
-                <Avatar />
-                <Avatar />
+                {attendees.map((attendee) => (
+                  <AttendeeAvatar key={attendee.$id} guest={attendee} theme={theme} />
+                ))}
               </AvatarGroup>
             </Box>
           </Box>
