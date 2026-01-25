@@ -63,6 +63,7 @@ export default function TaskDialog() {
     projects,
     labels,
     selectedProjectId,
+    userId,
   } = useTask();
 
   const [title, setTitle] = useState('');
