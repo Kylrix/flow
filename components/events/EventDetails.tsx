@@ -18,6 +18,7 @@ import {
   LocationOn as LocationIcon,
   Share as ShareIcon,
   Videocam as MeetingIcon,
+  Description as NotesIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useLayout } from '@/context/LayoutContext';
@@ -25,6 +26,7 @@ import { events as eventApi } from '@/lib/whisperrflow';
 import { generateEventPattern } from '@/utils/patternGenerator';
 import { Event as AppwriteEvent } from '@/types/whisperrflow';
 import { Event as LocalEvent } from '@/types';
+import { NoteSelectorModal } from '../common/NoteSelectorModal';
 
 interface EventDetailsProps {
   eventId: string;

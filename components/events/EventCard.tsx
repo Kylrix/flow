@@ -18,10 +18,16 @@ import {
   Share,
   AccessTime,
   People,
+  MoreVert as MoreIcon,
+  Assignment as NoteIcon,
 } from '@mui/icons-material';
 import { Event } from '@/types';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { generateEventPattern as generatePattern } from '@/utils/patternGenerator';
+import { useState } from 'react';
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { NoteSelectorModal } from '../common/NoteSelectorModal';
+import { events as eventApi } from '@/lib/whisperrflow';
 
 interface EventCardProps {
   event: Event;
@@ -31,6 +37,8 @@ interface EventCardProps {
 export default function EventCard({ event, onClick }: EventCardProps) {
   const theme = useTheme();
   const pattern = generatePattern(event.id);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   
   const getDateLabel = () => {
     const date = new Date(event.startTime);
@@ -41,9 +49,35 @@ export default function EventCard({ event, onClick }: EventCardProps) {
   
   const dateLabel = getDateLabel();
 
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setAnchorEl(e.currentTarget as HTMLElement);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleAttachNote = async (noteId: string) => {
+    setIsNoteModalOpen(false);
+    const tag = `source:whisperrnote:${noteId}`;
+    const currentTags = (event as any).tags || [];
+    if (currentTags.includes(tag)) return;
+
+    try {
+      await eventApi.update(event.id, {
+        tags: [...currentTags, tag]
+      });
+    } catch (err) {
+      console.error('Failed to link note to event:', err);
+    }
+  };
+
   return (
     <Card
       elevation={0}
+      onContextMenu={handleMenuClick}
       sx={{
         border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
         borderRadius: 4,
@@ -217,7 +251,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
           )}
           <IconButton 
             size="small" 
-            onClick={(e) => { e.stopPropagation(); }}
+            onClick={handleMenuClick}
             sx={{
               bgcolor: alpha(theme.palette.primary.main, 0.1),
               '&:hover': {
@@ -225,10 +259,40 @@ export default function EventCard({ event, onClick }: EventCardProps) {
               },
             }}
           >
-            <Share fontSize="small" sx={{ fontSize: 16 }} />
+            <MoreIcon fontSize="small" sx={{ fontSize: 16 }} />
           </IconButton>
         </Box>
       </CardContent>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          sx: { 
+            minWidth: 180, 
+            borderRadius: 2,
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #222222',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          },
+        }}
+      >
+        <MenuItem onClick={() => { setIsNoteModalOpen(true); handleMenuClose(); }}>
+          <ListItemIcon><NoteIcon sx={{ fontSize: 16, color: '#00F5FF' }} /></ListItemIcon>
+          <ListItemText primary="Attach Note" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon><Share fontSize="small" sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
+          <ListItemText primary="Share Event" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+        </MenuItem>
+      </Menu>
+
+      <NoteSelectorModal
+        isOpen={isNoteModalOpen}
+        onClose={() => setIsNoteModalOpen(false)}
+        onSelect={handleAttachNote}
+      />
     </Card>
   );
 }
