@@ -125,17 +125,27 @@ export default function FocusMode() {
       setIsPaused(false);
       // Bridge: Update presence in Connect
       if (userId) {
-        tablesDB.updateDocument('chat', 'users', userId, {
-          presence: 'busy',
-          statusMessage: 'In Focus Mode (WhisperrFlow)'
+        tablesDB.updateRow({
+          databaseId: 'chat',
+          tableId: 'users',
+          rowId: userId,
+          data: {
+            presence: 'busy',
+            statusMessage: 'In Focus Mode (WhisperrFlow)'
+          }
         }).catch(() => { /* Connect might not be initialized for this user */ });
       }
     } else {
       setIsPaused(!isPaused);
       if (userId) {
-        tablesDB.updateDocument('chat', 'users', userId, {
-          presence: isPaused ? 'busy' : 'online',
-          statusMessage: isPaused ? 'In Focus Mode (WhisperrFlow)' : ''
+        tablesDB.updateRow({
+          databaseId: 'chat',
+          tableId: 'users',
+          rowId: userId,
+          data: {
+            presence: isPaused ? 'busy' : 'online',
+            statusMessage: isPaused ? 'In Focus Mode (WhisperrFlow)' : ''
+          }
         }).catch(() => {});
       }
     }
@@ -147,9 +157,14 @@ export default function FocusMode() {
     }
     // Bridge: Restore presence in Connect
     if (userId) {
-      tablesDB.updateDocument('chat', 'users', userId, {
-        presence: 'online',
-        statusMessage: ''
+      tablesDB.updateRow({
+        databaseId: 'chat',
+        tableId: 'users',
+        rowId: userId,
+        data: {
+          presence: 'online',
+          statusMessage: ''
+        }
       }).catch(() => {});
     }
     setIsActive(false);

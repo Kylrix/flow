@@ -81,13 +81,13 @@ export default function TaskDialog() {
   // Bridge: Load contacts from Connect
   useEffect(() => {
     if (taskDialogOpen && userId) {
-      tablesDB.listDocuments('chat', 'contacts', [
-        // Appwrite Query.equal('userId', userId) - but we use TablesDB terminology here if possible
-        // Actually, the appwrite SDK Databases.listDocuments still uses Query.
-        // For simplicity, we use the standard databases if tablesDB is just an alias.
-      ]).then((res: any) => {
+      tablesDB.listRows({
+        databaseId: 'chat',
+        tableId: 'contacts',
+        queries: []
+      }).then((res: any) => {
         // Map contacts to simple {id, name}
-        const mapped = res.documents.map((c: any) => ({
+        const mapped = (res.rows || res.documents).map((c: any) => ({
           id: c.contactUserId,
           name: c.nickname || 'Unknown Contact'
         }));
