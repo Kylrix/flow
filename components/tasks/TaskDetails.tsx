@@ -45,6 +45,7 @@ import { Priority, TaskStatus } from '@/types';
 import { useLayout } from '@/context/LayoutContext';
 import { useAI } from '@/hooks/useAI';
 import dynamic from 'next/dynamic';
+import { NoteSelectorModal } from '../common/NoteSelectorModal';
 
 const OriginSocialSection = dynamic(() => import('./OriginSocialSection'), {
   loading: () => null,
@@ -93,10 +94,21 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
   const [editDescription, setEditDescription] = useState('');
   const [statusAnchor, setStatusAnchor] = useState<null | HTMLElement>(null);
   const [priorityAnchor, setPriorityAnchor] = useState<null | HTMLElement>(null);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
   // AI Integration
   const { generate } = useAI();
   const [isGeneratingSubtasks, setIsGeneratingSubtasks] = useState(false);
+
+  const handleAttachNote = async (noteId: string) => {
+    setIsNoteModalOpen(false);
+    const currentNotes = task.linkedNotes || [];
+    if (currentNotes.includes(noteId)) return;
+
+    updateTask(task.id, {
+      linkedNotes: [...currentNotes, noteId]
+    });
+  };
 
   const handleGenerateSubtasks = async () => {
     if (!task?.title) return;
@@ -483,10 +495,11 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
               size="small"
               startIcon={<NotesIcon sx={{ fontSize: 16 }} />}
               onClick={() => {
-                const sourceTag = task.labels?.find(t => t.startsWith('source:whisperrnote:'));
-                if (sourceTag) {
-                  const noteId = sourceTag.split(':')[2];
+                if (task.linkedNotes && task.linkedNotes.length > 0) {
+                  const noteId = task.linkedNotes[0];
                   window.open(`https://note.whisperrnote.space/notes?openNoteId=${noteId}`, '_blank');
+                } else {
+                  setIsNoteModalOpen(true);
                 }
               }}
               sx={{ 
@@ -494,10 +507,10 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
                 border: '1px solid rgba(255, 255, 255, 0.05)', 
                 bgcolor: 'rgba(255, 255, 255, 0.01)', 
                 fontSize: '0.75rem',
-                color: task.labels?.some(t => t.startsWith('source:whisperrnote:')) ? '#00F5FF' : 'inherit'
+                color: (task.linkedNotes && task.linkedNotes.length > 0) ? '#00F5FF' : 'inherit'
               }}
             >
-              {task.labels?.some(t => t.startsWith('source:whisperrnote:')) ? 'View Source' : 'Link Note'}
+              {(task.linkedNotes && task.linkedNotes.length > 0) ? 'View Source' : 'Link Note'}
             </Button>
             <Button
               variant="outlined"
@@ -618,6 +631,12 @@ export default function TaskDetails({ taskId }: TaskDetailsProps) {
           </MenuItem>
         ))}
       </Menu>
+
+      <NoteSelectorModal
+        isOpen={isNoteModalOpen}
+        onClose={() => setIsNoteModalOpen(false)}
+        onSelect={handleAttachNote}
+      />
     </Box>
   );
 }

@@ -24,7 +24,9 @@ const mapAppwriteTaskToTask = (doc: AppwriteTask): Task => {
   // Extract project ID from tags if present (format: "project:ID")
   const projectTag = doc.tags?.find(t => t.startsWith('project:'));
   const projectId = projectTag ? projectTag.split(':')[1] : 'inbox';
-  const otherTags = doc.tags?.filter(t => !t.startsWith('project:')) || [];
+  const userLabels = doc.tags?.filter(t => !t.startsWith('project:') && !t.startsWith('source:')) || [];
+  const linkedNotes = doc.tags?.filter(t => t.startsWith('source:whisperrnote:'))
+                               .map(t => t.split(':')[2]) || [];
 
   return {
     id: doc.$id,
@@ -33,7 +35,8 @@ const mapAppwriteTaskToTask = (doc: AppwriteTask): Task => {
     status: (doc.status as TaskStatus) || 'todo',
     priority: (doc.priority as Priority) || 'medium',
     projectId: projectId,
-    labels: otherTags,
+    labels: userLabels,
+    linkedNotes: linkedNotes,
     subtasks: [],
     comments: [],
     attachments: [],
@@ -552,11 +555,20 @@ export function TaskProvider({ children }: TaskProviderProps) {
       if (updates.status !== undefined) apiUpdates.status = updates.status;
       if (updates.priority !== undefined) apiUpdates.priority = updates.priority;
       if (updates.dueDate !== undefined) apiUpdates.dueDate = updates.dueDate?.toISOString();
-      if (updates.labels !== undefined) {
+      if (updates.labels !== undefined || updates.linkedNotes !== undefined) {
         const currentTask = state.tasks.find(t => t.id === id);
         const projectId = updates.projectId || currentTask?.projectId;
-        const finalTags = [...updates.labels];
         
+        // Start with provided labels or current ones
+        let finalTags = updates.labels !== undefined ? [...updates.labels] : [...(currentTask?.labels || [])];
+        
+        // Merge linked notes (source: tags)
+        const notesToLink = updates.linkedNotes !== undefined ? updates.linkedNotes : (currentTask?.linkedNotes || []);
+        notesToLink.forEach(noteId => {
+          const tag = `source:whisperrnote:${noteId}`;
+          if (!finalTags.includes(tag)) finalTags.push(tag);
+        });
+
         if (projectId && projectId !== 'inbox') {
           const projectTag = `project:${projectId}`;
           if (!finalTags.includes(projectTag)) {

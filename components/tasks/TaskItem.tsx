@@ -95,11 +95,11 @@ export default React.memo(function TaskItem({ task, onClick, compact = false }: 
 
   const handleAttachNote = async (noteId: string) => {
     setIsNoteModalOpen(false);
-    const tag = `source:whisperrnote:${noteId}`;
-    if (task.labels.includes(tag)) return;
+    const currentNotes = task.linkedNotes || [];
+    if (currentNotes.includes(noteId)) return;
 
     updateTask(task.id, {
-      labels: [...task.labels, tag]
+      linkedNotes: [...currentNotes, noteId]
     });
   };
 
