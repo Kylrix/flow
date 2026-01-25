@@ -46,7 +46,6 @@ const mapAppwriteTaskToTask = (doc: AppwriteTask): Task => {
     updatedAt: new Date(doc.$updatedAt),
     position: 0,
     isArchived: false,
-    metadata: doc.metadata,
   };
 };
 
