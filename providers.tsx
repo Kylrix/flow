@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ThemeProvider } from '@/theme';
-import { TaskProvider, AuthProvider, LayoutProvider, OriginProvider } from '@/context';
+import { TaskProvider, AuthProvider, LayoutProvider, OriginProvider, NotificationProvider } from '@/context';
 import { useEcosystemIntents } from '@/hooks/useEcosystemIntents';
 import { useEcosystemNode } from '@/hooks/useEcosystemNode';
 
@@ -20,14 +20,16 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <LayoutProvider>
-          <OriginProvider>
-            <TaskProvider>
-              <EcosystemHandler />
-              {children}
-            </TaskProvider>
-          </OriginProvider>
-        </LayoutProvider>
+        <NotificationProvider>
+          <LayoutProvider>
+            <OriginProvider>
+              <TaskProvider>
+                <EcosystemHandler />
+                {children}
+              </TaskProvider>
+            </OriginProvider>
+          </LayoutProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );

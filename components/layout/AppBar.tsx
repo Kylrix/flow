@@ -31,10 +31,14 @@ import {
   Keyboard,
   LayoutGrid,
   Sparkles,
-  Download
+  Download,
+  CheckCircle,
+  XCircle,
+  Clock
 } from 'lucide-react';
 import { useTask } from '@/context/TaskContext';
 import { useAuth } from '@/context/auth/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
 import { Logo } from '@/components/common';
 import { ECOSYSTEM_APPS } from '@/lib/constants';
 import dynamic from 'next/dynamic';
@@ -59,6 +63,7 @@ export default function AppBar() {
   const theme = useTheme();
   const { toggleSidebar, setSearchQuery, searchQuery, setTaskDialogOpen } = useTask();
   const { user, logout } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [appsAnchorEl, setAppsAnchorEl] = useState<null | HTMLElement>(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
@@ -284,9 +289,10 @@ export default function AppBar() {
             <IconButton
               onClick={handleNotifClick}
               sx={{
-                color: '#A1A1AA',
+                color: unreadCount > 0 ? '#00F0FF' : '#A1A1AA',
                 borderRadius: '12px',
                 p: 1.25,
+                bgcolor: unreadCount > 0 ? 'rgba(0, 240, 255, 0.05)' : 'transparent',
                 '&:hover': {
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   color: '#F2F2F2',
@@ -294,7 +300,7 @@ export default function AppBar() {
               }}
             >
               <Badge
-                badgeContent={3}
+                badgeContent={unreadCount}
                 color="primary"
                 sx={{
                   '& .MuiBadge-badge': {
@@ -541,64 +547,82 @@ export default function AppBar() {
             }}
           >
             <Typography variant="subtitle1" sx={{ fontWeight: 900, fontFamily: '"Space Grotesk", sans-serif' }}>
-              Notifications
+              Intelligence Feed
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ cursor: 'pointer', color: 'primary.main', fontWeight: 700 }}
-            >
-              Mark all read
-            </Typography>
+            {unreadCount > 0 && (
+              <Typography
+                variant="caption"
+                onClick={() => { markAllAsRead(); handleClose(); }}
+                sx={{ cursor: 'pointer', color: 'primary.main', fontWeight: 700 }}
+              >
+                Mark all read
+              </Typography>
+            )}
           </Box>
           <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
-          {[
-            {
-              title: 'Task due soon',
-              message: '"Fix login bug" is due today',
-              time: '5m ago',
-              unread: true,
-            },
-            {
-              title: 'Comment added',
-              message: 'Sarah commented on "Design dashboard"',
-              time: '1h ago',
-              unread: true,
-            },
-            {
-              title: 'Task completed',
-              message: 'You completed "Set up CI/CD pipeline"',
-              time: '2h ago',
-              unread: true,
-            },
-          ].map((notif, index) => (
-            <MenuItem
-              key={index}
-              sx={{
-                py: 2,
-                px: 2.5,
-                backgroundColor: notif.unread
-                  ? 'rgba(0, 245, 255, 0.03)'
-                  : 'transparent',
-                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' }
-              }}
-            >
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  {notif.title}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
-                  {notif.message}
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}>
-                  {notif.time}
+          <Box sx={{ maxHeight: 400, overflowY: 'auto' }}>
+            {notifications.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <Clock size={32} color="rgba(255, 255, 255, 0.1)" style={{ marginBottom: 12, marginLeft: 'auto', marginRight: 'auto' }} />
+                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.4)', fontWeight: 600 }}>
+                  No recent activity detected
                 </Typography>
               </Box>
-            </MenuItem>
-          ))}
+            ) : (
+              notifications.slice(0, 10).map((notif) => {
+                const isRead = !!localStorage.getItem(`read_notif_${notif.$id}`);
+                return (
+                  <MenuItem
+                    key={notif.$id}
+                    onClick={() => { markAsRead(notif.$id); handleClose(); }}
+                    sx={{
+                      py: 2,
+                      px: 2.5,
+                      borderLeft: isRead ? 'none' : '3px solid #00F5FF',
+                      backgroundColor: isRead
+                        ? 'transparent'
+                        : 'rgba(0, 245, 255, 0.03)',
+                      '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+                      <Box sx={{ 
+                        width: 36, 
+                        height: 36, 
+                        borderRadius: '10px', 
+                        bgcolor: 'rgba(255, 255, 255, 0.03)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {notif.action.toLowerCase().includes('delete') ? (
+                          <XCircle size={18} color="#FF4D4D" />
+                        ) : (
+                          <CheckCircle size={18} color="#00F5FF" />
+                        )}
+                      </Box>
+                      <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700, color: 'white', lineHeight: 1.2 }}>
+                          {notif.action.toUpperCase()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem', mt: 0.5, noWrap: true, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {notif.targetType}: {notif.details || notif.targetId}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}>
+                          {new Date(notif.timestamp).toLocaleString()}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </MenuItem>
+                );
+              })
+            )}
+          </Box>
           <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
           <MenuItem sx={{ justifyContent: 'center', py: 1.5 }}>
-            <Typography sx={{ color: 'primary.main', variant: 'body2', fontWeight: 700 }}>
-              View all notifications
+            <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700 }}>
+              View all activity
             </Typography>
           </MenuItem>
         </Menu>
