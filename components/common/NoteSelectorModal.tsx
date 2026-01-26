@@ -18,10 +18,10 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  Close as CloseIcon,
+  X,
   Search as SearchIcon,
-  Description as NoteIcon,
-} from '@mui/icons-material';
+  FileText,
+} from 'lucide-react';
 import { notes as notesApi } from '@/lib/whisperrflow';
 
 interface Note {
@@ -72,9 +72,10 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 4,
+          borderRadius: '24px',
           backgroundImage: 'none',
-          backgroundColor: '#050505',
+          backgroundColor: 'rgba(10, 10, 10, 0.95)',
+          backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           boxShadow: '0 24px 48px rgba(0, 0, 0, 0.8)',
         },
@@ -82,15 +83,15 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
     >
       <DialogTitle sx={{ px: 3, pt: 3, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box>
-          <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em', color: '#F2F2F2' }}>
+          <Typography variant="h6" sx={{ fontWeight: 900, letterSpacing: '-0.02em', color: 'white', fontFamily: 'var(--font-space-grotesk)' }}>
             ATTACH NOTE
           </Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em' }}>
-            SELECT RESOURCE FROM WHISPERRNOTE
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.4)', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            Resource from WhisperrNote
           </Typography>
         </Box>
-        <IconButton onClick={onClose} size="small" sx={{ color: 'text.disabled', '&:hover': { color: '#F2F2F2' } }}>
-          <CloseIcon sx={{ fontSize: 20 }} />
+        <IconButton onClick={onClose} size="small" sx={{ bgcolor: 'rgba(255, 255, 255, 0.03)', color: 'rgba(255, 255, 255, 0.4)', '&:hover': { color: 'white', bgcolor: 'rgba(255, 255, 255, 0.08)' } }}>
+          <X size={18} strokeWidth={1.5} />
         </IconButton>
       </DialogTitle>
 
@@ -105,10 +106,10 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
             variant="filled"
             InputProps={{
               disableUnderline: true,
-              sx: { borderRadius: 2, bgcolor: 'rgba(255, 255, 255, 0.03)' },
+              sx: { borderRadius: '12px', bgcolor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' },
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
+                  <SearchIcon size={18} strokeWidth={1.5} style={{ color: 'rgba(255, 255, 255, 0.3)' }} />
                 </InputAdornment>
               ),
             }}
@@ -116,12 +117,12 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
 
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-              <CircularProgress size={32} sx={{ color: '#00F5FF' }} />
+              <CircularProgress size={24} sx={{ color: '#00F5FF' }} />
             </Box>
           ) : filteredNotes.length === 0 ? (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, opacity: 0.3 }}>
-              <NoteIcon sx={{ fontSize: 48, mb: 1 }} />
-              <Typography variant="body2">No notes found</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, opacity: 0.2 }}>
+              <FileText size={48} strokeWidth={1} />
+              <Typography variant="body2" sx={{ mt: 1, fontWeight: 600 }}>No notes found</Typography>
             </Box>
           ) : (
             <List sx={{ flex: 1, overflowY: 'auto' }}>
@@ -130,26 +131,33 @@ export function NoteSelectorModal({ isOpen, onClose, onSelect }: NoteSelectorMod
                   key={note.$id}
                   onClick={() => onSelect(note.$id)}
                   sx={{
-                    borderRadius: 2,
+                    borderRadius: '12px',
                     mb: 1,
-                    border: '1px solid rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    transition: 'all 0.2s ease',
                     '&:hover': {
                       bgcolor: 'rgba(0, 245, 255, 0.05)',
                       borderColor: 'rgba(0, 245, 255, 0.2)',
+                      transform: 'translateX(4px)',
                     }
                   }}
                 >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <FileText size={20} color="#00F5FF" strokeWidth={1.5} />
+                  </ListItemIcon>
                   <ListItemText
                     primary={note.title || 'Untitled Note'}
                     secondary={note.content ? (note.content.substring(0, 60) + '...') : ''}
                     primaryTypographyProps={{
                       fontSize: '0.9rem',
-                      fontWeight: 700,
-                      color: '#F2F2F2'
+                      fontWeight: 800,
+                      color: 'white',
+                      fontFamily: 'var(--font-space-grotesk)'
                     }}
                     secondaryTypographyProps={{
                       fontSize: '0.75rem',
-                      color: 'text.secondary'
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontWeight: 500
                     }}
                   />
                 </ListItemButton>

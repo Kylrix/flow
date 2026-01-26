@@ -14,22 +14,17 @@ import {
   alpha,
 } from '@mui/material';
 import {
-  LocationOn,
-  Share,
-  AccessTime,
-  People,
-  MoreVert as MoreIcon,
-  Assignment as NoteIcon,
-} from '@mui/icons-material';
+  MapPin,
+  Share2,
+  Clock,
+  Users,
+  MoreVertical,
+} from 'lucide-react';
 import { Event } from '@/types';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { generateEventPattern as generatePattern } from '@/utils/patternGenerator';
 import { useState } from 'react';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
-import { NoteSelectorModal } from '../common/NoteSelectorModal';
-import { SecretSelectorModal } from '../common/SecretSelectorModal';
-import { events as eventApi } from '@/lib/whisperrflow';
-import { VpnKey as KeyIcon } from '@mui/icons-material';
 
 interface EventCardProps {
   event: Event;
@@ -65,28 +60,23 @@ export default function EventCard({ event, onClick }: EventCardProps) {
       elevation={0}
       onContextMenu={handleMenuClick}
       sx={{
-        border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
-        borderRadius: 4,
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '24px',
         cursor: 'pointer',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         overflow: 'hidden',
         '&:hover': {
-          transform: 'translateY(-6px)',
-          boxShadow: `0 20px 40px ${alpha(theme.palette.primary.main, 0.15)}`,
-          borderColor: alpha(theme.palette.primary.main, 0.4),
+          transform: 'translateY(-4px)',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)',
+          borderColor: 'rgba(0, 245, 255, 0.3)',
           '& .event-image': {
             transform: 'scale(1.05)',
-          },
-          '& .event-overlay': {
-            opacity: 0.4,
           },
         },
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        background: theme.palette.mode === 'light' 
-          ? 'linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92))'
-          : 'linear-gradient(180deg, rgba(32,32,32,0.98), rgba(24,24,24,0.92))',
+        background: 'rgba(255, 255, 255, 0.02)',
         backdropFilter: 'blur(10px)',
       }}
       onClick={onClick}
@@ -104,44 +94,30 @@ export default function EventCard({ event, onClick }: EventCardProps) {
             objectFit: 'cover',
           }}
         />
-        {/* Gradient overlay */}
-        <Box
-          className="event-overlay"
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            background: `linear-gradient(180deg, transparent 40%, ${alpha(theme.palette.background.paper, 0.9)} 100%)`,
-            opacity: 0.6,
-            transition: 'opacity 0.3s ease',
-          }}
-        />
         {/* Date badge */}
         <Box
           sx={{
             position: 'absolute',
             top: 12,
             left: 12,
-            bgcolor: theme.palette.mode === 'light' 
-              ? 'rgba(255, 255, 255, 0.95)' 
-              : 'rgba(32, 32, 32, 0.95)',
-            borderRadius: 2.5,
+            bgcolor: 'rgba(10, 10, 10, 0.8)',
+            borderRadius: '12px',
             px: 1.5,
             py: 0.75,
-            boxShadow: `0 4px 12px ${alpha('#000', 0.15)}`,
-            backdropFilter: 'blur(8px)',
+            backdropFilter: 'blur(12px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             minWidth: 48,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+            border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
           <Typography 
             variant="caption" 
-            fontWeight="700" 
+            fontWeight="800" 
             sx={{ 
               textTransform: 'uppercase',
-              color: theme.palette.primary.main,
+              color: '#00F5FF',
               fontSize: '0.65rem',
               letterSpacing: '0.05em',
             }}
@@ -150,10 +126,11 @@ export default function EventCard({ event, onClick }: EventCardProps) {
           </Typography>
           <Typography 
             variant="h5" 
-            fontWeight="800" 
+            fontWeight="900" 
             sx={{ 
               lineHeight: 1,
-              color: theme.palette.text.primary,
+              color: 'white',
+              fontFamily: 'var(--font-space-grotesk)',
             }}
           >
             {format(new Date(event.startTime), 'd')}
@@ -169,13 +146,15 @@ export default function EventCard({ event, onClick }: EventCardProps) {
               top: 12,
               right: 12,
               bgcolor: dateLabel === 'Today' 
-                ? alpha(theme.palette.success.main, 0.9)
-                : alpha(theme.palette.info.main, 0.9),
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '0.7rem',
-              height: 24,
+                ? 'rgba(76, 175, 80, 0.2)'
+                : 'rgba(33, 150, 243, 0.2)',
+              color: dateLabel === 'Today' ? '#4CAF50' : '#2196F3',
+              border: `1px solid ${dateLabel === 'Today' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(33, 150, 243, 0.3)'}`,
+              fontWeight: 800,
+              fontSize: '0.65rem',
+              height: 22,
               backdropFilter: 'blur(4px)',
+              textTransform: 'uppercase',
             }}
           />
         )}
@@ -185,26 +164,28 @@ export default function EventCard({ event, onClick }: EventCardProps) {
         <Box>
           <Typography 
             variant="h6" 
-            fontWeight="700" 
+            fontWeight="800" 
             gutterBottom 
             noWrap
             sx={{
-              fontSize: '1.05rem',
+              fontSize: '1rem',
               lineHeight: 1.3,
+              fontFamily: 'var(--font-space-grotesk)',
+              color: 'white',
             }}
           >
             {event.title}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'text.secondary', mb: 0.75 }}>
-            <AccessTime sx={{ fontSize: 15, color: theme.palette.primary.main }} />
-            <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'rgba(255, 255, 255, 0.5)', mb: 0.75 }}>
+            <Clock size={14} strokeWidth={1.5} />
+            <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 600 }}>
               {format(new Date(event.startTime), 'h:mm a')} - {format(new Date(event.endTime), 'h:mm a')}
             </Typography>
           </Box>
           {event.location && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'text.secondary' }}>
-              <LocationOn sx={{ fontSize: 15, color: theme.palette.secondary.main }} />
-              <Typography variant="body2" noWrap sx={{ fontSize: '0.8rem' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'rgba(255, 255, 255, 0.5)' }}>
+              <MapPin size={14} strokeWidth={1.5} />
+              <Typography variant="body2" noWrap sx={{ fontSize: '0.75rem', fontWeight: 600 }}>
                 {event.location}
               </Typography>
             </Box>
@@ -220,8 +201,8 @@ export default function EventCard({ event, onClick }: EventCardProps) {
                   width: 28, 
                   height: 28, 
                   fontSize: 11,
-                  border: `2px solid ${theme.palette.background.paper}`,
-                  boxShadow: `0 2px 8px ${alpha('#000', 0.1)}`,
+                  border: '2px solid #0A0A0A',
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
                 } 
               }}
             >
@@ -230,22 +211,23 @@ export default function EventCard({ event, onClick }: EventCardProps) {
               ))}
             </AvatarGroup>
           ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-              <People sx={{ fontSize: 16 }} />
-              <Typography variant="caption">No attendees yet</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'rgba(255, 255, 255, 0.3)' }}>
+              <Users size={14} strokeWidth={1.5} />
+              <Typography variant="caption" sx={{ fontWeight: 600 }}>No attendees</Typography>
             </Box>
           )}
           <IconButton 
             size="small" 
             onClick={handleMenuClick}
             sx={{
-              bgcolor: alpha(theme.palette.primary.main, 0.1),
+              color: 'rgba(255, 255, 255, 0.4)',
               '&:hover': {
-                bgcolor: alpha(theme.palette.primary.main, 0.2),
+                color: 'white',
+                bgcolor: 'rgba(255, 255, 255, 0.05)',
               },
             }}
           >
-            <MoreIcon fontSize="small" sx={{ fontSize: 16 }} />
+            <MoreVertical size={16} strokeWidth={1.5} />
           </IconButton>
         </Box>
       </CardContent>
@@ -257,16 +239,18 @@ export default function EventCard({ event, onClick }: EventCardProps) {
         PaperProps={{
           sx: { 
             minWidth: 180, 
-            borderRadius: 2,
-            backgroundColor: '#0A0A0A',
-            border: '1px solid #222222',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(10, 10, 10, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
             boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            backgroundImage: 'none',
           },
         }}
       >
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon><Share fontSize="small" sx={{ fontSize: 16, color: '#A1A1AA' }} /></ListItemIcon>
-          <ListItemText primary="Share Event" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+        <MenuItem onClick={handleMenuClose} sx={{ py: 1.2, gap: 1.5 }}>
+          <ListItemIcon sx={{ minWidth: 'auto !important' }}><Share2 size={16} strokeWidth={1.5} color="rgba(255, 255, 255, 0.6)" /></ListItemIcon>
+          <ListItemText primary="Share Event" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }} />
         </MenuItem>
       </Menu>
     </Card>

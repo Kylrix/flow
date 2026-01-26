@@ -198,30 +198,33 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: '24px',
           backgroundImage: 'none',
-          background: theme.palette.mode === 'dark' 
-            ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.95)} 100%)`
-            : theme.palette.background.paper,
-          backdropFilter: 'blur(10px)',
+          backgroundColor: 'rgba(10, 10, 10, 0.95)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 32px 64px rgba(0, 0, 0, 0.7)',
+          overflow: 'hidden',
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Sparkles size={24} color={theme.palette.secondary.main} strokeWidth={1.5} />
-        <Typography variant="h6" fontWeight={600}>
-          AI Assistant
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 3, pt: 3 }}>
+        <Box sx={{ p: 1, borderRadius: '10px', bgcolor: 'rgba(0, 240, 255, 0.1)', color: '#00F0FF', display: 'flex' }}>
+          <Sparkles size={20} strokeWidth={1.5} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 900, fontFamily: 'var(--font-space-grotesk)', letterSpacing: '-0.02em', color: 'white' }}>
+          AI ASSISTANT
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        <IconButton onClick={handleClose} size="small">
-          <X size={20} />
+        <IconButton onClick={handleClose} size="small" sx={{ bgcolor: 'rgba(255, 255, 255, 0.03)', color: 'rgba(255, 255, 255, 0.4)', '&:hover': { color: 'white', bgcolor: 'rgba(255, 255, 255, 0.08)' } }}>
+          <X size={18} strokeWidth={1.5} />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ px: 3, py: 2 }}>
         {!result ? (
           <Box sx={{ mt: 1 }}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)', mb: 2, fontWeight: 500 }}>
               Describe what you want to do, and I&apos;ll help you create it.
             </Typography>
             <TextField
@@ -229,63 +232,79 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
               fullWidth
               multiline
               rows={3}
-              placeholder="e.g., 'Schedule a team meeting for next Tuesday at 2 PM' or 'Remind me to buy groceries tomorrow'"
+              placeholder="e.g., 'Schedule a team meeting for next Tuesday at 2 PM'..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               disabled={isLoading}
-              sx={{
-                mt: 2,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
+              variant="standard"
+              InputProps={{
+                disableUnderline: true,
+                sx: { 
+                  p: 2, 
+                  borderRadius: '16px', 
+                  bgcolor: 'rgba(255, 255, 255, 0.03)', 
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  fontSize: '1rem',
+                  color: 'white',
+                  fontFamily: 'var(--font-inter)',
+                  '&:focus-within': { borderColor: 'rgba(0, 245, 255, 0.3)' }
                 },
               }}
             />
           </Box>
         ) : (
           <Box sx={{ mt: 1 }}>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Here&apos;s what I found:
+            <Typography variant="subtitle2" sx={{ color: 'rgba(255, 255, 255, 0.4)', mb: 2, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Detected Intent
             </Typography>
             
-            <Card variant="outlined" sx={{ mt: 2, borderRadius: 2, position: 'relative', overflow: 'visible' }}>
+            <Card variant="outlined" sx={{ borderRadius: '20px', bgcolor: 'rgba(255, 255, 255, 0.02)', borderColor: 'rgba(255, 255, 255, 0.08)', position: 'relative', overflow: 'visible' }}>
               <Box
                 sx={{
                   position: 'absolute',
-                  top: -10,
-                  right: -10,
-                  bgcolor: theme.palette.success.main,
-                  color: 'white',
+                  top: -12,
+                  right: -12,
+                  bgcolor: '#4CAF50',
+                  color: 'black',
                   borderRadius: '50%',
                   p: 0.5,
                   display: 'flex',
+                  boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)',
+                  border: '2px solid #0A0A0A'
                 }}
               >
-                <CheckCircle2 size={20} />
+                <CheckCircle2 size={16} strokeWidth={3} />
               </Box>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
                   <Chip 
-                    label={result.intent === 'create_task' ? 'Task' : 'Event'} 
-                    color={result.intent === 'create_task' ? 'primary' : 'secondary'}
+                    label={result.intent === 'create_task' ? 'TASK' : 'EVENT'} 
                     size="small"
-                    icon={result.intent === 'create_task' ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
+                    sx={{
+                      bgcolor: result.intent === 'create_task' ? 'rgba(0, 245, 255, 0.1)' : 'rgba(168, 85, 247, 0.1)',
+                      color: result.intent === 'create_task' ? '#00F5FF' : '#A855F7',
+                      fontWeight: 900,
+                      fontSize: '0.65rem',
+                      borderRadius: '6px',
+                      border: '1px solid'
+                    }}
                   />
-                  <Typography variant="h6" component="div">
+                  <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: 'var(--font-space-grotesk)', color: 'white' }}>
                     {result.data.title}
                   </Typography>
                 </Box>
                 
                 {result.data.description && (
-                  <Box sx={{ display: 'flex', gap: 1, mt: 1, color: 'text.secondary' }}>
-                    <FileText size={20} strokeWidth={1.5} />
-                    <Typography variant="body2">{result.data.description}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5, color: 'rgba(255, 255, 255, 0.5)' }}>
+                    <FileText size={18} strokeWidth={1.5} />
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>{result.data.description}</Typography>
                   </Box>
                 )}
 
                 {(result.data.dueDate || result.data.startTime) && (
-                  <Box sx={{ display: 'flex', gap: 1, mt: 1, color: 'text.secondary' }}>
-                    <Clock size={20} strokeWidth={1.5} />
-                    <Typography variant="body2">
+                  <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5, color: 'rgba(255, 255, 255, 0.5)' }}>
+                    <Clock size={18} strokeWidth={1.5} />
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 600 }}>
                       {result.intent === 'create_task' && result.data.dueDate
                         ? new Date(result.data.dueDate).toLocaleString()
                         : result.intent === 'create_event'
@@ -298,29 +317,33 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
               </CardContent>
             </Card>
             
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, textAlign: 'center' }}>
+            <Typography variant="caption" sx={{ display: 'block', mt: 3, textAlign: 'center', color: 'rgba(255, 255, 255, 0.3)', fontWeight: 600 }}>
               {result.summary}
             </Typography>
           </Box>
         )}
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 3 }}>
+      <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
         {!result ? (
           <Button
             variant="contained"
             onClick={handleAnalyze}
             disabled={!prompt.trim() || isLoading}
-            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Sparkles size={20} />}
             fullWidth
             sx={{
-              borderRadius: 2,
-              background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-              color: 'white',
-              py: 1,
+              borderRadius: '12px',
+              bgcolor: '#00F5FF',
+              color: 'black',
+              fontWeight: 900,
+              py: 1.5,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              boxShadow: '0 8px 20px rgba(0, 245, 255, 0.2)',
+              '&:hover': { bgcolor: '#00D1DA', boxShadow: '0 12px 28px rgba(0, 245, 255, 0.3)' }
             }}
           >
-            {isLoading ? 'Analyzing...' : 'Generate'}
+            {isLoading ? <CircularProgress size={20} color="inherit" /> : 'Analyze Intent'}
           </Button>
         ) : (
           <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
@@ -328,9 +351,15 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
               variant="outlined"
               onClick={() => setResult(null)}
               fullWidth
-              sx={{ borderRadius: 2 }}
+              sx={{ 
+                borderRadius: '12px', 
+                borderColor: 'rgba(255, 255, 255, 0.1)', 
+                color: 'white', 
+                fontWeight: 700,
+                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.3)', bgcolor: 'rgba(255, 255, 255, 0.05)' }
+              }}
             >
-              Try Again
+              TRY AGAIN
             </Button>
             <Button
               variant="contained"
@@ -338,12 +367,15 @@ export default function AICommandModal({ open, onClose }: AICommandModalProps) {
               disabled={isExecuting}
               fullWidth
               sx={{
-                borderRadius: 2,
-                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                color: 'white',
+                borderRadius: '12px',
+                bgcolor: '#00F5FF',
+                color: 'black',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                '&:hover': { bgcolor: '#00D1DA' }
               }}
             >
-              {isExecuting ? 'Creating...' : 'Confirm & Create'}
+              {isExecuting ? 'INITIALIZING...' : 'CONFIRM & CREATE'}
             </Button>
           </Box>
         )}
