@@ -55,9 +55,12 @@ export default function EcosystemPortal({ open, onClose }: EcosystemPortalProps)
     const [search, setSearch] = useState('');
     const theme = useTheme();
 
+    const FLAGSHIP_APPS = ['note', 'keep', 'flow', 'connect'];
     const filteredApps = ECOSYSTEM_APPS.filter(app =>
-        app.label.toLowerCase().includes(search.toLowerCase()) ||
-        app.description.toLowerCase().includes(search.toLowerCase())
+        FLAGSHIP_APPS.includes(app.id) && (
+            app.label.toLowerCase().includes(search.toLowerCase()) ||
+            app.description.toLowerCase().includes(search.toLowerCase())
+        )
     );
 
     const handleAppClick = (subdomain: string) => {
@@ -172,39 +175,6 @@ export default function EcosystemPortal({ open, onClose }: EcosystemPortalProps)
 
                 {/* Grid of Apps */}
                 <Box sx={{ p: 3, maxHeight: '60vh', overflow: 'auto' }}>
-                    <Box sx={{ mb: 4 }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.3)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2, display: 'block' }}>
-                            System Utilities
-                        </Typography>
-                        <Box 
-                            component="button"
-                            onClick={() => onClose()}
-                            sx={{
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 2,
-                                p: 1.5,
-                                borderRadius: '16px',
-                                bgcolor: 'rgba(0, 240, 255, 0.03)',
-                                border: '1px solid rgba(0, 240, 255, 0.1)',
-                                color: 'white',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                '&:hover': {
-                                    bgcolor: 'rgba(0, 240, 255, 0.08)',
-                                    borderColor: 'rgba(0, 240, 255, 0.3)'
-                                }
-                            }}
-                        >
-                            <Activity size={20} color="#00F0FF" />
-                            <Box sx={{ textAlign: 'left' }}>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>Kernel Monitor</Typography>
-                                <Typography variant="caption" sx={{ color: 'rgba(0, 240, 255, 0.5)' }}>Real-time ecosystem telemetry</Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-
                     <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.3)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2, display: 'block' }}>
                         Available Gateways
                     </Typography>
@@ -259,19 +229,13 @@ export default function EcosystemPortal({ open, onClose }: EcosystemPortalProps)
                                                 {app.description}
                                             </Typography>
                                         </Box>
-                                    </Box>
-                                </Grid>
-                            ))}
-                        </Grid>
-
-                        {/* Ecosystem Widgets Integration */}
-                        {search.length === 0 && (
-                            <EcosystemWidgets />
-                        )}
-                    </Box>
-
-                    {/* Footer */}
-                    <Box sx={{ p: 2, bgcolor: 'rgba(0, 240, 255, 0.03)', display: 'flex', justifyContent: 'center' }}>
+                                                                    </Box>
+                                                                </Grid>
+                                                            ))}
+                                                        </Grid>
+                                                    </Box>
+                                    
+                                                    {/* Footer */}                    <Box sx={{ p: 2, bgcolor: 'rgba(0, 240, 255, 0.03)', display: 'flex', justifyContent: 'center' }}>
                         <Typography variant="caption" sx={{ color: 'rgba(0, 240, 255, 0.4)', fontWeight: 700, letterSpacing: '0.05em' }}>
                             POWERED BY WHISPERR AI
                         </Typography>
