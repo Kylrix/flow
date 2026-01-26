@@ -38,27 +38,45 @@ export async function ensureGlobalIdentity(user: any, force = false) {
             if (e.code === 404) {
                 // Create new global profile
                 const username = user.prefs?.username || `user${user.$id.slice(0, 6)}`;
+                const profilePicId = user.prefs?.profilePicId || null;
 
-                profile = await tablesDB.createRow({
-                    databaseId: CONNECT_DATABASE_ID,
-                    tableId: CONNECT_COLLECTION_ID_USERS,
-                    rowId: user.$id,
-                    data: {
-                        username,
-                        displayName: user.name || username,
-                        appsActive: ['flow'],
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-                        bio: '',
-                        avatarUrl: user.prefs?.avatarUrl || null,
-                        privacySettings: JSON.stringify({ public: true })
-                    },
-                    permissions: [
-                        'read("any")',
-                        `update("user:${user.$id}")`,
-                        `delete("user:${user.$id}")`
-                    ]
-                });
+                const baseData = {
+                    username,
+                    displayName: user.name || username,
+                    appsActive: ['flow'],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    bio: '',
+                    privacySettings: JSON.stringify({ public: true })
+                };
+
+                const permissions = [
+                    'read("any")',
+                    `update("user:${user.$id}")`,
+                    `delete("user:${user.$id}")`
+                ];
+
+                const avatarFieldCandidates = ['profilePicId', 'avatarFileId', 'avatarUrl'];
+
+                for (const field of avatarFieldCandidates) {
+                    try {
+                        const payload = { ...baseData };
+                        if (profilePicId) payload[field] = profilePicId;
+
+                        profile = await tablesDB.createRow({
+                            databaseId: CONNECT_DATABASE_ID,
+                            tableId: CONNECT_COLLECTION_ID_USERS,
+                            rowId: user.$id,
+                            data: payload,
+                            permissions
+                        });
+                        break;
+                    } catch (inner: any) {
+                        const msg = (inner.message || JSON.stringify(inner)).toLowerCase();
+                        if (msg.includes('unknown attribute')) continue;
+                        throw inner;
+                    }
+                }
             } else {
                 throw e;
             }
