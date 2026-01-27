@@ -606,7 +606,7 @@ export default function AppBar() {
                         <Typography variant="body2" sx={{ fontWeight: 700, color: 'white', lineHeight: 1.2 }}>
                           {notif.action.toUpperCase()}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem', mt: 0.5, noWrap: true, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <Typography variant="body2" noWrap sx={{ color: 'text.secondary', fontSize: '0.75rem', mt: 0.5, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {notif.targetType}: {notif.details || notif.targetId}
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}>
