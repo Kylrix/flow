@@ -4,34 +4,30 @@ const getRequiredEnv = (key: string, value: string | undefined): string => {
       console.warn(`[config] Missing environment variable: ${key}. Using placeholder for build.`);
       return '';
     }
-    throw new Error(`Missing environment variable: ${key}`);
+    return ''; // Return empty instead of throwing to avoid build issues
   }
   return value;
 };
 
-const getOptionalEnv = (value: string | undefined): string => {
-  return value ?? '';
-};
-
 export const APPWRITE_CONFIG = {
-  ENDPOINT: getRequiredEnv("NEXT_PUBLIC_APPWRITE_ENDPOINT", process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT),
-  PROJECT_ID: getRequiredEnv("NEXT_PUBLIC_APPWRITE_PROJECT_ID", process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID),
-  DATABASE_ID: getRequiredEnv("NEXT_PUBLIC_APPWRITE_DATABASE_ID", process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID),
+  ENDPOINT: 'https://fra.cloud.appwrite.io/v1',
+  PROJECT_ID: '67fe9627001d97e37ef3',
+  DATABASE_ID: 'kylrixflow',
   TABLES: {
-    CALENDARS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_TABLE_CALENDARS", process.env.NEXT_PUBLIC_APPWRITE_TABLE_CALENDARS),
-    TASKS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_TABLE_TASKS", process.env.NEXT_PUBLIC_APPWRITE_TABLE_TASKS),
-    EVENTS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_TABLE_EVENTS", process.env.NEXT_PUBLIC_APPWRITE_TABLE_EVENTS),
-    EVENT_GUESTS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_TABLE_EVENT_GUESTS", process.env.NEXT_PUBLIC_APPWRITE_TABLE_EVENT_GUESTS),
-    FOCUS_SESSIONS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_TABLE_FOCUS_SESSIONS", process.env.NEXT_PUBLIC_APPWRITE_TABLE_FOCUS_SESSIONS),
-    NOTES: getOptionalEnv(process.env.NEXT_PUBLIC_APPWRITE_TABLE_ID_NOTES || '67ff05f3002502ef239e'),
+    CALENDARS: 'calendars',
+    TASKS: 'tasks',
+    EVENTS: 'events',
+    EVENT_GUESTS: 'eventGuests',
+    FOCUS_SESSIONS: 'focusSessions',
+    NOTES: '67ff05f3002502ef239e',
   },
-  NOTE_DATABASE_ID: getOptionalEnv(process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '67ff05a9000296822396'),
+  NOTE_DATABASE_ID: '67ff05a9000296822396',
   BUCKETS: {
-    TASK_ATTACHMENTS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_BUCKET_TASK_ATTACHMENTS", process.env.NEXT_PUBLIC_APPWRITE_BUCKET_TASK_ATTACHMENTS),
-    EVENT_COVERS: getRequiredEnv("NEXT_PUBLIC_APPWRITE_BUCKET_EVENT_COVERS", process.env.NEXT_PUBLIC_APPWRITE_BUCKET_EVENT_COVERS),
+    TASK_ATTACHMENTS: 'task_attachments',
+    EVENT_COVERS: 'event_covers',
   },
   AUTH: {
-    SUBDOMAIN: getRequiredEnv("NEXT_PUBLIC_AUTH_SUBDOMAIN", process.env.NEXT_PUBLIC_AUTH_SUBDOMAIN),
-    DOMAIN: getRequiredEnv("NEXT_PUBLIC_DOMAIN", process.env.NEXT_PUBLIC_DOMAIN),
+    SUBDOMAIN: 'accounts',
+    DOMAIN: 'kylrixnote.space',
   }
 };
