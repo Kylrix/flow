@@ -40,10 +40,13 @@ const config: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [];
+  },
 };
 
 const nextConfig = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
-})(config);
+})(config as any);
 
 export default nextConfig;
