@@ -1,3 +1,5 @@
+import { PROJECT_ID, ENDPOINT } from '../generated/appwrite/constants';
+
 const getRequiredEnv = (key: string, value: string | undefined): string => {
   if (!value) {
     if (process.env.NODE_ENV === 'production') {
@@ -10,9 +12,9 @@ const getRequiredEnv = (key: string, value: string | undefined): string => {
 };
 
 export const APPWRITE_CONFIG = {
-  ENDPOINT: 'https://fra.cloud.appwrite.io/v1',
-  PROJECT_ID: '67fe9627001d97e37ef3',
-  DATABASE_ID: 'kylrixflow',
+  ENDPOINT,
+  PROJECT_ID,
+  DATABASE_ID: 'whisperrflow',
   TABLES: {
     CALENDARS: 'calendars',
     TASKS: 'tasks',
